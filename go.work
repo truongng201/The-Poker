@@ -1,6 +1,6 @@
 go 1.20
 
 use (
-	./servers/auth
-	./servers/ws
+	./servers/auth-service
+	./servers/ws-service
 )

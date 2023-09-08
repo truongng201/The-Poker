@@ -14,7 +14,7 @@ func Routes(e *echo.Echo, controller controller.AppController) *echo.Echo {
 	api := e.Group("/auth")
 
 	api.GET("/health", func(c echo.Context) error {
-		return c.String(200, "Hello, World!")
+		return controller.HealthCheckController.Execute(c)
 	})
 
 	return e
