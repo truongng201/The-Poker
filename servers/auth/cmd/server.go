@@ -1,8 +1,9 @@
-package main
+package cmd
 
 import (
-	routes "server/pkg/routes"
-	controller "server/pkg/controller"
+	controller "auth-service/pkg/controller"
+	routes "auth-service/pkg/routes"
+
 	"github.com/labstack/echo/v4"
 )
 

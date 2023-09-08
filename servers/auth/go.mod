@@ -1,4 +1,4 @@
-module server
+module auth-service
 
 go 1.20
 
