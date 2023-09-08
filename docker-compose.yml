@@ -2,27 +2,29 @@ version: "3.1"
 services:
   auth-service:
     build:
-      context: ./servers/auth
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./servers/auth-service/Dockerfile.dev
+    platform: linux/amd64 # this is needed for M1 M2 Macs
     hostname: auth-service
     container_name: auth-service
     restart: unless-stopped
+    volumes:
+      - ./servers/auth-service:/app
     ports:
       - 8080:8080
-    depends_on:
-      - database
 
   ws-service:
     build:
-      context: ./servers/ws
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: servers/ws-service/Dockerfile.dev
+    platform: linux/amd64 # this is needed for M1 M2 Macs
     hostname: ws-service
     container_name: ws-service
     restart: unless-stopped
+    volumes:
+      - ./servers/ws-service:/app
     ports:
       - 8081:8080
-    depends_on:
-      - database
 
   database:
     image: postgres:14.0-alpine
