@@ -8,8 +8,6 @@ import (
 
 func Routes(e *echo.Echo, controller controller.AppController) *echo.Echo {
 
-	// Static Routes
-	e.Static("/", "../../../client/build")
 	// ApiRoutes
 	api := e.Group("/auth")
 
