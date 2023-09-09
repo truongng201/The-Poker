@@ -27,7 +27,7 @@ jobs:
         run: echo "Folder auth in servers has changed"
 
       # run only if "service" folder was not changed
-      - name: "auth service is not chnaged"
+      - name: "auth service is not changed"
         if: steps.changes.outputs.service == 'false'
         run: echo "Folder auth in servers has not changed"
 
