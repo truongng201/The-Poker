@@ -56,6 +56,6 @@ jobs:
       - name: Pull and run Docker images on Droplet
         run: |
           chmod +x ./scripts/get-monitor-service-changed.sh
-          SERVICE_CHANGED=$(./scripts/get-monitor-service-changed.sh monitor)
+          SERVICES_CHANGED=$(./scripts/get-monitor-service-changed.sh monitor)
           scp -r ./monitor ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}}:./monitor
           ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker-compose up --build -d --force-recreate --remove-orphans $SERVICES_CHANGED'
