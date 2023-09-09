@@ -3,7 +3,7 @@ server {
     listen [::]:80;
     server_name ${SERVER_DOMAIN};
 
-    location /auth {
+    location /auth/ {
         proxy_pass http://auth-service:8080/auth/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -11,7 +11,7 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
     }
 
-    location /ws {
+    location /ws/ {
         proxy_pass http://ws-service:8080/ws/;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
