@@ -3,9 +3,9 @@
 CURRENT_FOLDER_NAME=$1
 
 # Get the current folder name
-echo $CURRENT_FOLDER_NAME
 SERVICES_CHANGED=()
-  # Check for changes in the folder name
+
+# Check for changes in the folder name
 CHANGED=$(git diff --name-only HEAD~ HEAD | grep "$CURRENT_FOLDER_NAME")
 if [[ -n "$CHANGED" ]]; then
   # read line separated by space into bash array 
