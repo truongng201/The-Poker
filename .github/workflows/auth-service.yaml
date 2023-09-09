@@ -20,6 +20,11 @@ jobs:
           filters: |
             service:
               - 'servers/auth/**'
+      
+      - name: Show GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJson(github) }}
+        run: echo "$GITHUB_CONTEXT"
 
       # run only if "service" folder was changed
       - name: "auth service is changed"
