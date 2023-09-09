@@ -18,7 +18,7 @@ jobs:
         id: changes
         with:
           filters: |
-            servers:
+            service:
               - 'servers/auth/**'
 
       # run only if "service" folder was changed
