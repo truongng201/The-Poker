@@ -68,5 +68,5 @@ jobs:
       - name: Move client build to nginx server and run nginx
         run: |
           scp -r ./client/build/ ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}}:.
-          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker cp ./build/ nginx:/usr/share/nginx/html'
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker cp ./build/. nginx:/usr/share/nginx/html'
           ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker restart nginx'
