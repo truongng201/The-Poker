@@ -14,17 +14,7 @@ type HealthCheck struct {
 	Message string `json:"message" xml:"message"`
 	Version string `json:"version" xml:"version"`
 }
-
-var commit_hash = func() string {
-	if info, ok := debug.ReadBuildInfo(); ok {
-		for _, setting := range info.Settings {
-			if setting.Key == "vcs.revision" {
-				return setting.Value[:7]
-			}
-		}
-	}
-	return ""
-}()
+var Version string
 
 var module_name = func() string {
 	if info, ok := debug.ReadBuildInfo(); ok {
@@ -37,6 +27,6 @@ func (controller HealthCheckController) Execute(c echo.Context) error {
 	return c.JSON(200, &HealthCheck{
 		Success: true,
 		Message: fmt.Sprintf("Service %s is up and running!", module_name()),
-		Version: commit_hash,
+		Version: Version[:7],
 	})
 }
