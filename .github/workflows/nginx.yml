@@ -77,14 +77,14 @@ jobs:
           scp -r ./nginx ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}}:.
           ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker-compose up --build -d --force-recreate --remove-orphans nginx'
 
-      - name: Generate new ssl certificate with certbot
-        run: |
-          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker exec nginx certbot --nginx -d ${{secrets.PROJECT_ALPHA_DOMAINS}} -m ${{ secrets.USER_EMAIL}} --agree-tos --no-eff-email'
+      # - name: Generate new ssl certificate with certbot
+      #   run: |
+      #     ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker exec nginx certbot --nginx -d ${{secrets.PROJECT_ALPHA_DOMAINS}} -m ${{ secrets.USER_EMAIL}} --agree-tos --no-eff-email'
 
       # Error when running certbot since too many requests were made to the letsencrypt server
       # To fix this, copy the ssl certificate from the server to the docker image and reinstall it
-      - name: Copy and reinstall ssl certifcate to docker image
-        run: |
-          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker cp ./letsencrypt nginx:/etc'
-          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker cp ./conf.d nginx:/etc/nginx'
-          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker exec nginx nginx -s reload'
+      # - name: Copy and reinstall ssl certifcate to docker image
+      #   run: |
+      #     ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker cp ./letsencrypt nginx:/etc'
+      #     ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker cp ./conf.d nginx:/etc/nginx'
+      #     ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker exec nginx nginx -s reload'

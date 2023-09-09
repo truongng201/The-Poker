@@ -51,17 +51,3 @@ server {
         proxy_read_timeout 86400;
     }
 }
-
-server {
-    listen 80;
-    listen [::]:80;
-
-    root /var/www/${CLIENT_DOMAIN}/html;
-    index index.html index.htm index.nginx-debian.html;
-
-    server_name ${CLIENT_DOMAIN};
-
-    location / {
-        try_files $uri $uri/ =404;
-    }
-}
