@@ -26,26 +26,22 @@ services:
     ports:
       - 8081:8080
 
-  nginx:
-    build:
-      context: .
-      dockerfile: ./nginx/Dockerfile
+  client:
+    image: node:18.10.0-alpine3.14
     platform: linux/amd64 # this is needed for M1 M2 Macs
-    hostname: nginx
-    container_name: nginx
+    hostname: client
+    container_name: client
     restart: unless-stopped
     volumes:
-      - ./nginx/templates:/etc/nginx/templates
-    environment:
-      - SERVER_DOMAIN=localhost
+      - ./client:/app
     ports:
-      - 80:80
+      - 3000:3000
 
-  # database:
-  #   image: postgres:14.0-alpine
-  #   environment:
-  #     POSTGRES_USER: postgres
-  #     POSTGRES_PASSWORD: postgres
-  #     POSTGRES_DB: auth
-  #   ports:
-  #     - 5432:5432
+  database:
+    image: postgres:14.0-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: auth
+    ports:
+      - 5432:5432
