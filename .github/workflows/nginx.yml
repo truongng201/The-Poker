@@ -79,12 +79,13 @@ jobs:
 
       - name: Generate new ssl certificate with certbot
         run: |
-          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} '[ ! -d "letsencrypt" ] && [ ! -d "conf.d"  ] && docker exec nginx certbot --nginx -d ${{secrets.PROJECT_BETA_DOMAINS}} -m ${{ secrets.USER_EMAIL}} --agree-tos --no-eff-email'
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} '[ ! -d "letsencrypt" ] && [ ! -d "conf.d"  ] && docker exec nginx certbot --nginx -d ${{secrets.PROJECT_BETA_DOMAINS}} -m ${{ secrets.USER_EMAIL}} --agree-tos --no-eff-email || echo "SSL certificate already exists""'
 
       # Error when running certbot since too many requests were made to the letsencrypt server
       # To fix this, copy the ssl certificate from the server to the docker image and reinstall it
-      - name: Copy and reinstall ssl certifcate to docker image 
+      - name: Copy and reinstall ssl certifcate to docker image
         run: |
-          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} '[ -d "letsencrypt" ] && docker cp ./letsencrypt nginx:/etc'
-          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} '[ -d "conf.d"  ] && docker cp ./conf.d nginx:/etc/nginx'
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} '[ -d "letsencrypt" ] && docker cp ./letsencrypt nginx:/etc || echo "No letsencrypt folder found"'
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} '[ -d "conf.d"  ] && docker cp ./conf.d nginx:/etc/nginx || echo "No conf.d folder found"'
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} '[ -d "build" ] && docker cp ./build/. nginx:/usr/share/nginx/html || echo "No build folder found"'
           ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker exec nginx nginx -s reload'
