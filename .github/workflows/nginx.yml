@@ -1,0 +1,90 @@
+name: Project Beta CI/CD nginx config pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check_folder_nginx_changed:
+    name: Check if nginx folder changed
+    runs-on: ubuntu-latest
+    outputs:
+      is_changed: ${{ steps.changes.outputs.nginx }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            nginx:
+              - 'nginx/**'
+
+      # run only if "nginx" files were changed
+      - name: nginx is changed
+        if: steps.changes.outputs.nginx == 'true'
+        run: echo "Folder nginx has changed"
+
+      # run only if "nginx" files were not changed
+      - name: nginx is not changed
+        if: steps.changes.outputs.nginx == 'false'
+        run: echo "Folder nginx has not changed"
+
+  build_and_push:
+    name: Build and Push Server Docker Image
+    runs-on: ubuntu-latest
+    needs: [check_folder_nginx_changed]
+    if: needs.check_folder_nginx_changed.outputs.is_changed == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+
+      - name: Build Nginx Docker image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME}}/${{ secrets.DOCKERHUB_REPOSITORY}}-nginx:latest ./nginx
+
+      - name: Push Nginx Docker image to Docker Hub
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME}}/${{ secrets.DOCKERHUB_REPOSITORY}}-nginx:latest
+
+  pull_and_run_on_droplet:
+    name: Pull Config and Run Docker Image on Droplet
+    needs: [build_and_push]
+    if: needs.check_folder_nginx_changed.outputs.is_changed == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          cd ~/.ssh/ 
+          touch id_rsa && touch known_hosts && chmod 600 id_rsa
+          echo "${{ secrets.DIGITALOCEAN_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+
+      - name: Add Droplet to known hosts
+        run: ssh-keyscan ${{ secrets.SERVER_IP_ADDRESS}} >> ~/.ssh/known_hosts
+
+      - name: Pull and run Docker images on Droplet
+        run: |
+          scp -r ./nginx ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}}:.
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker-compose up --build -d --force-recreate --remove-orphans nginx'
+
+      - name: Generate new ssl certificate with certbot
+        run: |
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker exec nginx certbot --nginx -d ${{secrets.PROJECT_ALPHA_DOMAINS}} -m ${{ secrets.USER_EMAIL}} --agree-tos --no-eff-email'
+
+      # Error when running certbot since too many requests were made to the letsencrypt server
+      # To fix this, copy the ssl certificate from the server to the docker image and reinstall it
+      - name: Copy and reinstall ssl certifcate to docker image
+        run: |
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker cp ./letsencrypt nginx:/etc'
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker cp ./conf.d nginx:/etc/nginx'
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker exec nginx nginx -s reload'

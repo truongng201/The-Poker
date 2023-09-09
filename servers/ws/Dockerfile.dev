@@ -4,7 +4,7 @@
 FROM debian:11-slim AS development
 
 # Set environment variables for Go installation
-ENV GOLANG_VERSION 1.18
+ENV GOLANG_VERSION 1.20.3
 ENV GOLANG_URL https://golang.org/dl/go${GOLANG_VERSION}.linux-amd64.tar.gz
 
 # Install required dependencies
