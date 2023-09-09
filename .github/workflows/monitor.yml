@@ -46,7 +46,7 @@ jobs:
       - name: Get services changed
         run: |
           chmod +x ./scripts/get-monitor-service-changed.sh
-          SERVICE_CHANGED=$(./scripts/get-monitor-service-change.sh monitor)
+          SERVICE_CHANGED=$(./scripts/get-monitor-service-changed.sh monitor)
 
       - name: Install SSH key
         run: |
