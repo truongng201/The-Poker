@@ -64,4 +64,4 @@ jobs:
         run: |
           echo $SERVICES_CHANGED
           scp -r ./monitor ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}}:./monitor
-          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker-compose up --build -d --force-recreate --remove-orphans $SERVICES_CHANGED'
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker-compose up --build -d --force-recreate --remove-orphans ${{ env.SERVICES_CHANGED}}'
