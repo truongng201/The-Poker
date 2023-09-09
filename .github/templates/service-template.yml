@@ -19,17 +19,17 @@ jobs:
         with:
           filters: |
             servers:
-              - 'servers/{{SERVICE_NAME}}-service/**'
+              - 'servers/{{SERVICE_NAME}}/**'
 
       # run only if "service" folder was changed
       - name: "{{SERVICE_NAME}} service is changed"
         if: steps.changes.outputs.service == 'true'
-        run: echo "Folder {{SERVICE_NAME}}-service has changed"
+        run: echo "Folder {{SERVICE_NAME}} in servers has changed"
 
       # run only if "service" folder was not changed
       - name: "{{SERVICE_NAME}} service is not chnaged"
         if: steps.changes.outputs.service == 'false'
-        run: echo "Folder {{SERVICE_NAME}}-service has not changed"
+        run: echo "Folder {{SERVICE_NAME}} in servers has not changed"
 
   build_and_push:
     name: Build and Push {{SERVICE_NAME}} Service Docker Image

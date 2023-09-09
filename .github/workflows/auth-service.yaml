@@ -19,17 +19,17 @@ jobs:
         with:
           filters: |
             servers:
-              - 'servers/auth-service/**'
+              - 'servers/auth/**'
 
       # run only if "service" folder was changed
       - name: "auth service is changed"
         if: steps.changes.outputs.service == 'true'
-        run: echo "Folder auth-service has changed"
+        run: echo "Folder auth in servers has changed"
 
       # run only if "service" folder was not changed
       - name: "auth service is not chnaged"
         if: steps.changes.outputs.service == 'false'
-        run: echo "Folder auth-service has not changed"
+        run: echo "Folder auth in servers has not changed"
 
   build_and_push:
     name: Build and Push auth Service Docker Image

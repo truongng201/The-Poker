@@ -14,6 +14,7 @@ type HealthCheck struct {
 	Message string `json:"message" xml:"message"`
 	Version string `json:"version" xml:"version"`
 }
+
 var Version string
 
 var module_name = func() string {

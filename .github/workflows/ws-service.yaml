@@ -19,17 +19,17 @@ jobs:
         with:
           filters: |
             servers:
-              - 'servers/ws-service/**'
+              - 'servers/ws/**'
 
       # run only if "service" folder was changed
       - name: "ws service is changed"
         if: steps.changes.outputs.service == 'true'
-        run: echo "Folder ws-service has changed"
+        run: echo "Folder ws in servers has changed"
 
       # run only if "service" folder was not changed
       - name: "ws service is not chnaged"
         if: steps.changes.outputs.service == 'false'
-        run: echo "Folder ws-service has not changed"
+        run: echo "Folder ws in servers has not changed"
 
   build_and_push:
     name: Build and Push ws Service Docker Image
