@@ -14,7 +14,7 @@ function App() {
           href="https://reactjs.org"
           target="_blank"
           rel="noopener noreferrer">
-          Project beta 1.0.0
+          Project beta 1.0.1
         </a>
       </header>
     </div>
