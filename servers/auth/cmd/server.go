@@ -10,10 +10,7 @@ import (
 func main() {
 	// Echo instance
 	e := echo.New()
-
 	controller := controller.AppController{}
-	// Routes
-
 	e = routes.Routes(e, controller)
 
 	// Start server
