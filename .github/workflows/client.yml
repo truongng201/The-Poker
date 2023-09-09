@@ -1,0 +1,72 @@
+name: Project Beta CI/CD client config pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check_folder_client_changed:
+    name: Check if client folder changed
+    runs-on: ubuntu-latest
+    outputs:
+      is_changed: ${{ steps.changes.outputs.client }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            client:
+              - 'client/**'
+
+      # run only if "client" files were changed
+      - name: client is changed
+        if: steps.changes.outputs.client == 'true'
+        run: echo "Folder client has changed"
+
+      # run only if "client" files were not changed
+      - name: client is not changed
+        if: steps.changes.outputs.client == 'false'
+        run: echo "Folder client has not changed"
+
+  build_and_deploy:
+    name: Build React client and Run Nginx on Droplet
+    runs-on: ubuntu-latest
+    needs: [check_folder_client_changed]
+    if: needs.check_folder_client_changed.outputs.is_changed == 'true'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Use Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18.x"
+
+      - name: Install dependencies
+        run: |
+          cd client
+          npm install
+
+      - name: Build client
+        run: |
+          cd client
+          npm run build
+
+      - name: Install SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          cd ~/.ssh/ 
+          touch id_rsa && touch known_hosts && chmod 600 id_rsa
+          echo "${{ secrets.DIGITALOCEAN_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+
+      - name: Add Droplet to known hosts
+        run: ssh-keyscan ${{ secrets.SERVER_IP_ADDRESS}} >> ~/.ssh/known_hosts
+
+      - name: Move client build to nginx server and run nginx
+        run: |
+          scp -r ./client/build/ ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}}:.
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker cp ./build/ nginx:/usr/share/nginx/html'
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker restart nginx'

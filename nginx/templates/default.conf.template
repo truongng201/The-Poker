@@ -51,3 +51,14 @@ server {
         proxy_read_timeout 86400;
     }
 }
+
+server {
+    listen 80;
+    listen [::]:80;
+    root /usr/share/nginx/html;
+    server_name ${CLIENT_DOMAIN};
+
+    location / {
+        try_files $uri $uri/ =404;
+    }
+}

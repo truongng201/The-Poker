@@ -10,5 +10,5 @@ for SERVICE_NAME in $(ls servers); do
     WORKFLOW=$(echo "${WORKFLOW_SERVICE_TEMPLATE}" | sed "s/{{SERVICE_NAME}}/${SERVICE_NAME}/g")
 
     # save workflow to .github/workflows/{ROUTE}
-    echo "${WORKFLOW}" > .github/workflows/${SERVICE_NAME}-service.yaml
+    echo "${WORKFLOW}" > .github/workflows/${SERVICE_NAME}-service.yml
 done
