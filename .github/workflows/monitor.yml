@@ -1,0 +1,65 @@
+name: Project Beta CI/CD monitor config pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  check_folder_monitor_changed:
+    name: Check if monitor folder changed
+    runs-on: ubuntu-latest
+    outputs:
+      is_changed: ${{ steps.changes.outputs.monitor }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            monitor:
+              - 'monitor/**'
+
+      # run only if "monitor" files were changed
+      - name: monitor is changed
+        if: steps.changes.outputs.monitor == 'true'
+        run: echo "Folder grafana has changed"
+
+      # run only if "grafana" files were not changed
+      - name: monitor is not changed
+        if: steps.changes.outputs.monitor == 'false'
+        run: echo "Folder grafana has not changed"
+
+  pull_and_run_on_droplet:
+    name: Pull and Run Docker Image on Droplet
+    needs: [check_folder_monitor_changed]
+    if: needs.check_folder_monitor_changed.outputs.is_changed == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 2
+
+      - name: Get services changed
+        run: |
+          chmod +x ./scripts/get-monitor-service-changed.sh
+          SERVICE_CHANGED=$(./scripts/get-monitor-service-change.sh monitor)
+
+      - name: Install SSH key
+        run: |
+          mkdir -p ~/.ssh/
+          cd ~/.ssh/ 
+          touch id_rsa && touch known_hosts && chmod 600 id_rsa
+          echo "${{ secrets.DIGITALOCEAN_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+
+      - name: Add Droplet to known hosts
+        run: ssh-keyscan ${{ secrets.SERVER_IP_ADDRESS}} >> ~/.ssh/known_hosts
+
+      - name: Pull and run Docker images on Droplet
+        run: |
+          echo $SERVICE_CHANGED
+          scp -r ./monitor/production ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}}:./monitor
+          ssh ${{ secrets.SERVER_USER}}@${{ secrets.SERVER_IP_ADDRESS}} 'docker-compose up --build -d --force-recreate --remove-orphans $SERVICES_CHANGED'
