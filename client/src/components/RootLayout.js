@@ -17,9 +17,9 @@ export default function RootLayout() {
       iconPath: HomeIcon,
     },
     {
-      name: "Poker",
+      name: "Game",
       link: "/",
-      className: "page-component poker",
+      className: "page-component game",
       iconPath: CardsIcon,
     },
     {
