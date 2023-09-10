@@ -1,70 +1,50 @@
-# Getting Started with Create React App
+# POKER GAME CLIENT
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## How to run
 
-## Available Scripts
+1. Install dependencies
 
-In the project directory, you can run:
+```bash
+npm install
+```
 
-### `npm start`
+2. Run the client
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```bash
+npm run start
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+3. Open the browser at http://localhost:3000
 
-### `npm test`
+## Project structure
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- 'src' folder contains all the source code of the client
+- 'public' folder contains the static files of the client
+- 'package.json' contains the dependencies of the client
+- 'package-lock.json' contains the dependencies of the client
+- 'README.md' contains the instructions to run the client
 
-### `npm run build`
+- `src/index.js` is the main component of the client
+- `src/assets` contains the assets of the client: images, icons, etc.
+- `src/components` contains the components of the client
+- `src/pages` contains the pages of the client
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Dependencies
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- `react` is the framework used to build the client
+- `react-router-dom` is the library used to manage the routes of the client
+- `react-bootstrap` is the library used to build the UI of the client
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Website overview
 
-### `npm run eject`
+- The website is composed of 4 pages: Home, Poker, Monitors and Blog
+- The Home page is the landing page of the website and contains a description of the project
+- The Poker page is the main page of the website and contains the poker game
+- The Monitors page contains the list of monitors of all the containers of the project
+  by using grafana
+- The Blog page contains the blog posts of the project which redirect to the notion page
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Some screenshots
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+- Home page
+![Home page](../screenshots/website/Homepage.png)

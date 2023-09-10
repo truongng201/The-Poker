@@ -49,6 +49,11 @@ jobs:
         run: |
           cd client
           npm install
+      
+      - name: Add environment variables
+        run: |
+          cd client
+          echo ${{ secrets.CLIENT_ENV }} > .env.production
 
       - name: Build client
         run: |
