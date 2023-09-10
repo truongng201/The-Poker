@@ -12,13 +12,13 @@ export default function RootLayout() {
   const pages = [
     {
       name: "Home",
-      link: "/",
+      link: "https://github.com/truongng201/The-Poker/blob/main/README.md",
       className: "page-component home",
       iconPath: HomeIcon,
     },
     {
       name: "Poker",
-      link: "/poker",
+      link: "/",
       className: "page-component poker",
       iconPath: CardsIcon,
     },
@@ -30,7 +30,7 @@ export default function RootLayout() {
     },
     {
       name: "Blog",
-      link: "/blog",
+      link: "https://truongng012.notion.site/The-Poker-59eedcb297c340938be0daf79ec7c68f",
       className: "page-component blog",
       iconPath: BlogIcon,
     },

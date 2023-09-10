@@ -1,0 +1,26 @@
+.Poker {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+}
+
+.poker-layout {
+  height: 70%;
+  width: 70%;
+  display: grid;
+  grid-template-columns: 50% 50%;
+  border-radius: 10px;
+  -webkit-box-shadow: 0px 0px 16px 5px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 16px 5px rgba(0, 0, 0, 0.1);
+}
+
+.poker-right-container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgb(18, 24, 38);
+  border-radius: 0px 10px 10px 0px;
+}
