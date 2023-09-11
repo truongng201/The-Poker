@@ -1,0 +1,143 @@
+.Home-Poker {
+  height: 100%;
+  display: grid;
+  grid-template-rows: 40% 60%;
+}
+
+.login-avatar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+}
+
+.login-input {
+  display: grid;
+  padding: 5px 20px;
+  margin: 20px 0px;
+  grid-template-columns: 30% 70%;
+}
+.login-input-rand {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-avatar-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-input input {
+  width: 100%;
+  padding: 5px 20px;
+  height: 50px;
+  border-radius: 10px;
+  border: 2px solid rgb(18, 24, 38);
+  font-size: 16px;
+  outline: none;
+  font-weight: 600;
+  color: rgb(18, 24, 38);
+}
+
+.button-groups {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.home-button {
+  width: 150px;
+  padding: 10px 20px;
+  text-align: center;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  color: rgb(18, 24, 38);
+  background-color: white;
+  border: 3px solid rgb(18, 24, 38);
+  cursor: pointer;
+  line-height: 1rem;
+  font-weight: 600;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+  transition: all 0.2s;
+}
+.home-button > span {
+  margin-left: 5px;
+}
+
+.home-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background-color: rgb(18, 24, 38);
+  color: white;
+  transition: all 0.2s;
+}
+
+.home-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+}
+
+.home-button:hover::after {
+  transform: scaleX(1.4) scaleY(1.6);
+  opacity: 0;
+}
+
+.or-divider {
+  display: flex;
+  align-items: center;
+  margin: 20px;
+}
+
+.line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #aaa;
+}
+
+.or-text {
+  margin: 0 10px;
+  font-weight: bold;
+  color: #555;
+}
+
+.home-title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 26px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.continue-login-button {
+  width: 80%;
+  padding: 17px 20px;
+  text-align: center;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  background-color: rgb(18, 24, 38);
+  color: white;
+  cursor: pointer;
+  line-height: 1rem;
+  font-weight: 600;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+  transition: all 0.2s;
+  margin: 0 auto;
+}
+
+.continue-login-button:hover {
+  background-color: rgba(18, 24, 38, 0.9);
+  transition: all 0.2s;
+}

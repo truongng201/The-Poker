@@ -7,7 +7,9 @@ import RootLayout from "./components/RootLayout";
 import Monitor from "./pages/Monitor";
 import Poker from "./pages/Poker";
 import Error from "./pages/Error";
-import Login from "./pages/poker/Login";
+import Signin from "./pages/poker/Signin";
+import Signup from "./pages/poker/Signup";
+import Home from "./pages/poker/Home";
 
 const router = createBrowserRouter([
   {
@@ -19,7 +21,11 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Poker />,
-        children: [{ path: "/", element: <Login /> }],
+        children: [
+          { path: "/signup", element: <Signup /> },
+          { path: "/signin", element: <Signin /> },
+          { path: "/", element: <Home /> },
+        ],
       },
     ],
   },

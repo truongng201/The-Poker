@@ -1,0 +1,170 @@
+.Signin {
+  height: 100%;
+  padding: 10px;
+  display: grid;
+  grid-template-rows: 70% 30%;
+}
+
+.signin-upper-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+}
+
+.back {
+  width: 80%;
+  margin-bottom: 20px;
+}
+
+.back > a {
+  color: rgb(18, 24, 38);
+}
+.back > a:hover {
+  color: rgb(18, 24, 38, 0.8);
+  text-decoration: none;
+}
+.back > a > span {
+  color: rgb(18, 24, 38, 0.8);
+  margin-left: 10px;
+}
+
+form {
+  width: 80%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-control {
+  width: 100%;
+  padding: 5px 20px;
+  height: 50px;
+  border-radius: 10px;
+  border: 2px solid rgb(18, 24, 38);
+  font-size: 16px;
+  outline: none;
+  font-weight: 600;
+  color: rgb(18, 24, 38);
+  margin: 10px 0px;
+}
+
+.form-group > input:focus {
+  box-shadow: none;
+  border: 2px solid rgba(18, 24, 38, 0.2);
+}
+
+.signin-button {
+  width: 100%;
+  padding: 17px 20px;
+  text-align: center;
+  border-radius: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  background-color: rgb(18, 24, 38);
+  color: white;
+  cursor: pointer;
+  line-height: 1rem;
+  font-weight: 600;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+  transition: all 0.2s;
+  margin: 10px auto;
+}
+
+.signin-button:hover {
+  background-color: rgba(18, 24, 38, 0.9);
+  transition: all 0.2s;
+}
+
+.signin-group {
+  margin-top: 20px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+.signin-group > a {
+  color: rgb(18, 24, 38);
+}
+
+.signin-group > span {
+  color: rgb(18, 24, 38);
+  cursor: pointer;
+}
+
+.signin-group > span:hover {
+  color: rgb(18, 24, 38, 0.8);
+  text-decoration: underline;
+}
+.signin-group > a:hover {
+  color: rgb(18, 24, 38, 0.8);
+  text-decoration: underline;
+}
+
+.or-divider {
+  display: flex;
+  align-items: center;
+  margin: 20px;
+}
+
+.line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #aaa;
+}
+
+.or-text {
+  margin: 0 10px;
+  font-weight: bold;
+  color: #555;
+}
+
+.oauth-groups {
+  display: flex;
+  justify-content: space-evenly;
+  flex-direction: row;
+}
+
+.oauth-button {
+  padding: 10px;
+  border-radius: 8px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  cursor: pointer;
+  line-height: 1rem;
+}
+.google-button {
+  background-color: #ff4d4d;
+}
+.google-button:hover {
+  background-color: #ff6666;
+}
+.facebook-button {
+  background-color: #1877f2;
+}
+.facebook-button:hover {
+  background-color: #3b5ba2;
+}
+.github-button {
+  background-color: #333333;
+}
+.github-button:hover {
+  background-color: #555555;
+}
+.discord-button {
+  background-color: #7289da;
+}
+.discord-button:hover {
+  background-color: #99aab5;
+}

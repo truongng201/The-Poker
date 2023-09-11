@@ -1,12 +1,18 @@
-import "./Login.css";
+import { Link } from "react-router-dom";
+import "./Signin.css";
 import React from "react";
-import { Button } from "react-bootstrap";
+import BackIcon from "../../assets/icons/back.png";
 
-export default function Login() {
+export default function Signin() {
   return (
-    <div className="Login">
-      <div className="login-upper-container">
-        <div className="login-title">The Poker</div>
+    <div className="Signin">
+      <div className="signin-upper-container">
+        <div className="back">
+          <Link to="/">
+            <img src={BackIcon} alt="icon" width={"16px"} height={"16px"} />
+            <span>Back</span>
+          </Link>
+        </div>
         <form>
           <div className="form-group">
             <input
@@ -22,9 +28,15 @@ export default function Login() {
               placeholder="Password"
             />
           </div>
-          <Button variant="primary" type="submit">
-            Login
-          </Button>
+          <div className="signin-button">
+            <span>Sign In</span>
+          </div>
+          <div className="signin-group">
+            <span className="forgot-password">Forgot password?</span>
+            <Link to="/signup" className="signup">
+              Sign Up
+            </Link>
+          </div>
         </form>
       </div>
       <div>
