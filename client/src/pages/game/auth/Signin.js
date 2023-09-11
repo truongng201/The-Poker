@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import "./Signin.css";
 import React from "react";
-import BackIcon from "../../assets/icons/back.png";
+import BackIcon from "../../../assets/icons/back.png";
 
 export default function Signin() {
   return (
@@ -32,7 +32,9 @@ export default function Signin() {
             <span>Sign In</span>
           </div>
           <div className="signin-group">
-            <span className="forgot-password">Forgot password?</span>
+            <Link to="/forgot" className="forgot-password">
+              Forgot password ?
+            </Link>
             <Link to="/signup" className="signup">
               Sign Up
             </Link>

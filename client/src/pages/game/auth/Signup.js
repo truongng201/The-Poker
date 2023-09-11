@@ -1,6 +1,6 @@
 import "./Signup.css";
 import React from "react";
-import BackIcon from "../../assets/icons/back.png";
+import BackIcon from "../../../assets/icons/back.png";
 import { Link } from "react-router-dom";
 
 export default function Signup() {

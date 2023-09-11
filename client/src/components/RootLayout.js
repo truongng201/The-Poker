@@ -5,7 +5,6 @@ import HomeIcon from "../assets/icons/home.png";
 import MonitorIcon from "../assets/icons/monitor.png";
 import BlogIcon from "../assets/icons/blog.png";
 import CardsIcon from "../assets/icons/cards.png";
-import Logo from "../assets/logo/logo-no-background.svg";
 import Avatar from "../assets/avatar.png";
 
 export default function RootLayout() {
@@ -38,9 +37,6 @@ export default function RootLayout() {
   return (
     <div className="root-layout">
       <div className="left-container">
-        <Link className="logo" to="/">
-          <img src={Logo} alt="logo" className="logo" />
-        </Link>
         <div className="pages">
           {pages.map((page, index) => {
             return (

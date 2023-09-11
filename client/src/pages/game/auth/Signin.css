@@ -95,15 +95,18 @@
   color: rgb(18, 24, 38);
 }
 
-.signin-group > span {
+.signin-group > .forgot-password {
   color: rgb(18, 24, 38);
+  font-weight: 400;
   cursor: pointer;
 }
 
-.signin-group > span:hover {
+.signin-group > .forgot-password:hover {
   color: rgb(18, 24, 38, 0.8);
   text-decoration: underline;
+  font-weight: 400;
 }
+
 .signin-group > a:hover {
   color: rgb(18, 24, 38, 0.8);
   text-decoration: underline;
