@@ -14,16 +14,16 @@ export default function Signin() {
           </Link>
         </div>
         <form>
-          <div className="form-group">
+          <div className="form-group-signin">
             <input
               type="text"
-              className="form-control"
+              className="form-control-signin"
               id="username"
               placeholder="Email"
             />
             <input
               type="password"
-              className="form-control"
+              className="form-control-signin"
               id="password"
               placeholder="Password"
             />
