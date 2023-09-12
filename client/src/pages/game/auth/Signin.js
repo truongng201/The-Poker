@@ -13,17 +13,17 @@ export default function Signin() {
             <span>Back</span>
           </Link>
         </div>
-        <form>
-          <div className="form-group-signin">
+        <form className="shared-form">
+          <div className="shared-form-group form-group-signin">
             <input
               type="text"
-              className="form-control-signin"
+              className="shared-form-control form-control-signin"
               id="username"
               placeholder="Email"
             />
             <input
               type="password"
-              className="form-control-signin"
+              className="shared-form-control form-control-signin"
               id="password"
               placeholder="Password"
             />
