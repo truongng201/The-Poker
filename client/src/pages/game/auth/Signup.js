@@ -5,41 +5,41 @@ import { Link } from "react-router-dom";
 
 export default function Signup() {
   return (
-    <div className="Signup">
+    <div className="shared-container Signup">
       <div className="back">
         <Link to="/signin">
           <img src={BackIcon} alt="icon" width={"16px"} height={"16px"} />
           <span>Back</span>
         </Link>
       </div>
-      <form>
-        <div className="form-group-signup">
+      <form className="shared-form">
+        <div className="shared-form-group form-group-signup">
           <input
             type="text"
-            className="form-control-signup"
+            className="shared-form-control form-control-signup"
             id="email"
             placeholder="Email"
           />
           <input
             type="text"
-            className="form-control-signup"
+            className="shared-form-control form-control-signup"
             id="username"
             placeholder="Username"
           />
           <input
             type="password"
-            className="form-control-signup"
+            className="shared-form-control form-control-signup"
             id="password"
             placeholder="Password"
           />
           <input
             type="retype-password"
-            className="form-control-signup"
+            className="shared-form-control form-control-signup"
             id="retype-password"
             placeholder="Retype Password"
           />
         </div>
-        <div className="signup-button">
+        <div className="shared-button" id="signup-button">
           <span>Sign Up</span>
         </div>
       </form>

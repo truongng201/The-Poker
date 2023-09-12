@@ -19,3 +19,88 @@ body {
     Segoe UI, Roboto, Helvetica Neue, Arial, Noto Sans, sans-serif,
     Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
 }
+
+/* Shared css */
+.shared-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.shared-form-control {
+  padding: 5px 20px;
+  height: 50px;
+  border-radius: 10px;
+  border: 2px solid rgb(18, 24, 38);
+  font-size: 16px;
+  outline: none;
+  font-weight: 600;
+  color: rgb(18, 24, 38);
+  margin: 10px 0px;
+}
+
+.shared-form-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+}
+.shared-form-group > input:focus {
+  box-shadow: none;
+  border: 2px solid rgba(18, 24, 38, 0.2);
+}
+
+.shared-button {
+  padding: 17px 20px;
+  text-align: center;
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  background-color: rgb(18, 24, 38);
+  color: white;
+  cursor: pointer;
+  line-height: 1rem;
+  font-weight: 600;
+  -webkit-user-select: none; /* Safari */
+  -ms-user-select: none; /* IE 10 and IE 11 */
+  user-select: none; /* Standard syntax */
+  transition: all 0.2s;
+  margin: 10px auto;
+}
+
+.shared-form {
+  width: 80%;
+}
+
+.shared-button:hover {
+  background-color: rgba(18, 24, 38, 0.9);
+  transition: all 0.2s;
+}
+
+.shared-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: rgb(18, 24, 38);
+  margin-bottom: 20px;
+}
+
+.back {
+  width: 80%;
+  margin-bottom: 20px;
+}
+
+.back > a {
+  color: rgb(18, 24, 38);
+}
+.back > a:hover {
+  color: rgb(18, 24, 38, 0.8);
+  text-decoration: none;
+}
+.back > a > span {
+  color: rgb(18, 24, 38, 0.8);
+  margin-left: 10px;
+}
