@@ -28,6 +28,6 @@ func (controller HealthCheckController) Execute(c echo.Context) error {
 	return c.JSON(200, &HealthCheck{
 		Success: true,
 		Message: fmt.Sprintf("Service %s is up and running!", module_name()),
-		Version: Version[:7],
+		Version: Version,
 	})
 }
