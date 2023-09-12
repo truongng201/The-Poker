@@ -1,6 +1,7 @@
 -- name: GetUsers :many
 SELECT 
     id,
+    user_id,
     email,
     username,
     image_url
@@ -12,6 +13,7 @@ OFFSET $2;
 -- name: GetUserById :one
 SELECT 
     id,
+    user_id,
     email,
     username,
     image_url
@@ -21,6 +23,7 @@ WHERE id = $1;
 -- name: GetUserByEmail :one
 SELECT 
     id,
+    user_id,
     email,
     username,
     image_url
@@ -29,6 +32,7 @@ WHERE email = $1;
 
 -- name: CreateUser :one
 INSERT INTO users (
+    user_id,
     email,
     username,
     hashed_password,
@@ -37,8 +41,9 @@ INSERT INTO users (
     $1,
     $2,
     $3,
-    $4
-) RETURNING *;
+    $4,
+    $5
+) RETURNING user_id, email;
 
 -- name: UpdateUser :one
 UPDATE users SET
@@ -46,8 +51,8 @@ UPDATE users SET
     username = $2,
     hashed_password = $3,
     image_url = $4
-WHERE id = $5
-RETURNING *;
+WHERE email = $5
+RETURNING user_id, email;
 
 -- name: DeleteUser :exec
 DELETE FROM users

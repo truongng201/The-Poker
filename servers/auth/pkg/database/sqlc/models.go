@@ -5,12 +5,12 @@
 package database
 
 import (
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type User struct {
-	ID             uuid.UUID        `json:"id"`
+	ID             int64            `json:"id"`
+	UserID         string           `json:"user_id"`
 	Username       string           `json:"username"`
 	Email          string           `json:"email"`
 	HashedPassword string           `json:"hashed_password"`

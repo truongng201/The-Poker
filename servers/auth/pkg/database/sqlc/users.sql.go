@@ -8,12 +8,12 @@ package database
 import (
 	"context"
 
-	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
+    user_id,
     email,
     username,
     hashed_password,
@@ -22,34 +22,34 @@ INSERT INTO users (
     $1,
     $2,
     $3,
-    $4
-) RETURNING id, username, email, hashed_password, image_url, created_at, updated_at
+    $4,
+    $5
+) RETURNING user_id, email
 `
 
 type CreateUserParams struct {
+	UserID         string      `json:"user_id"`
 	Email          string      `json:"email"`
 	Username       string      `json:"username"`
 	HashedPassword string      `json:"hashed_password"`
 	ImageUrl       pgtype.Text `json:"image_url"`
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
+type CreateUserRow struct {
+	UserID string `json:"user_id"`
+	Email  string `json:"email"`
+}
+
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error) {
 	row := q.db.QueryRow(ctx, createUser,
+		arg.UserID,
 		arg.Email,
 		arg.Username,
 		arg.HashedPassword,
 		arg.ImageUrl,
 	)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Username,
-		&i.Email,
-		&i.HashedPassword,
-		&i.ImageUrl,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
+	var i CreateUserRow
+	err := row.Scan(&i.UserID, &i.Email)
 	return i, err
 }
 
@@ -58,7 +58,7 @@ DELETE FROM users
 WHERE id = $1
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
+func (q *Queries) DeleteUser(ctx context.Context, id int64) error {
 	_, err := q.db.Exec(ctx, deleteUser, id)
 	return err
 }
@@ -66,6 +66,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id uuid.UUID) error {
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT 
     id,
+    user_id,
     email,
     username,
     image_url
@@ -74,7 +75,8 @@ WHERE email = $1
 `
 
 type GetUserByEmailRow struct {
-	ID       uuid.UUID   `json:"id"`
+	ID       int64       `json:"id"`
+	UserID   string      `json:"user_id"`
 	Email    string      `json:"email"`
 	Username string      `json:"username"`
 	ImageUrl pgtype.Text `json:"image_url"`
@@ -85,6 +87,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEm
 	var i GetUserByEmailRow
 	err := row.Scan(
 		&i.ID,
+		&i.UserID,
 		&i.Email,
 		&i.Username,
 		&i.ImageUrl,
@@ -95,6 +98,7 @@ func (q *Queries) GetUserByEmail(ctx context.Context, email string) (GetUserByEm
 const getUserById = `-- name: GetUserById :one
 SELECT 
     id,
+    user_id,
     email,
     username,
     image_url
@@ -103,17 +107,19 @@ WHERE id = $1
 `
 
 type GetUserByIdRow struct {
-	ID       uuid.UUID   `json:"id"`
+	ID       int64       `json:"id"`
+	UserID   string      `json:"user_id"`
 	Email    string      `json:"email"`
 	Username string      `json:"username"`
 	ImageUrl pgtype.Text `json:"image_url"`
 }
 
-func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (GetUserByIdRow, error) {
+func (q *Queries) GetUserById(ctx context.Context, id int64) (GetUserByIdRow, error) {
 	row := q.db.QueryRow(ctx, getUserById, id)
 	var i GetUserByIdRow
 	err := row.Scan(
 		&i.ID,
+		&i.UserID,
 		&i.Email,
 		&i.Username,
 		&i.ImageUrl,
@@ -124,6 +130,7 @@ func (q *Queries) GetUserById(ctx context.Context, id uuid.UUID) (GetUserByIdRow
 const getUsers = `-- name: GetUsers :many
 SELECT 
     id,
+    user_id,
     email,
     username,
     image_url
@@ -139,7 +146,8 @@ type GetUsersParams struct {
 }
 
 type GetUsersRow struct {
-	ID       uuid.UUID   `json:"id"`
+	ID       int64       `json:"id"`
+	UserID   string      `json:"user_id"`
 	Email    string      `json:"email"`
 	Username string      `json:"username"`
 	ImageUrl pgtype.Text `json:"image_url"`
@@ -156,6 +164,7 @@ func (q *Queries) GetUsers(ctx context.Context, arg GetUsersParams) ([]GetUsersR
 		var i GetUsersRow
 		if err := rows.Scan(
 			&i.ID,
+			&i.UserID,
 			&i.Email,
 			&i.Username,
 			&i.ImageUrl,
@@ -176,8 +185,8 @@ UPDATE users SET
     username = $2,
     hashed_password = $3,
     image_url = $4
-WHERE id = $5
-RETURNING id, username, email, hashed_password, image_url, created_at, updated_at
+WHERE email = $5
+RETURNING user_id, email
 `
 
 type UpdateUserParams struct {
@@ -185,26 +194,23 @@ type UpdateUserParams struct {
 	Username       string      `json:"username"`
 	HashedPassword string      `json:"hashed_password"`
 	ImageUrl       pgtype.Text `json:"image_url"`
-	ID             uuid.UUID   `json:"id"`
+	Email_2        string      `json:"email_2"`
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
+type UpdateUserRow struct {
+	UserID string `json:"user_id"`
+	Email  string `json:"email"`
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (UpdateUserRow, error) {
 	row := q.db.QueryRow(ctx, updateUser,
 		arg.Email,
 		arg.Username,
 		arg.HashedPassword,
 		arg.ImageUrl,
-		arg.ID,
+		arg.Email_2,
 	)
-	var i User
-	err := row.Scan(
-		&i.ID,
-		&i.Username,
-		&i.Email,
-		&i.HashedPassword,
-		&i.ImageUrl,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
+	var i UpdateUserRow
+	err := row.Scan(&i.UserID, &i.Email)
 	return i, err
 }

@@ -1,4 +1,4 @@
-.PHONY: migrate_up migrate_down sqlc_generate
+.PHONY: migrate_up migrate_down sqlc
 
 # ==============================================================================
 # Go migrate postgresql
@@ -15,5 +15,5 @@ migrate_down:
 # ==============================================================================
 # Go sqlc postgresql
 
-generate:
+sqlc:
 	sqlc generate
