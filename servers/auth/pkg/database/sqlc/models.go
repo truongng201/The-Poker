@@ -8,6 +8,17 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type RefreshToken struct {
+	ID         int64            `json:"id"`
+	Token      string           `json:"token"`
+	IpAddress  string           `json:"ip_address"`
+	UserAgent  pgtype.Text      `json:"user_agent"`
+	DeviceType pgtype.Text      `json:"device_type"`
+	UserID     int64            `json:"user_id"`
+	CreatedAt  pgtype.Timestamp `json:"created_at"`
+	UpdatedAt  pgtype.Timestamp `json:"updated_at"`
+}
+
 type User struct {
 	ID             int64            `json:"id"`
 	UserID         string           `json:"user_id"`

@@ -11,6 +11,48 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+const createRefreshToken = `-- name: CreateRefreshToken :one
+INSERT INTO refresh_tokens (
+    user_id,
+    token,
+    ip_address,
+    user_agent,
+    device_type
+) VALUES (
+    $1,
+    $2,
+    $3,
+    $4,
+    $5
+) RETURNING id, user_id
+`
+
+type CreateRefreshTokenParams struct {
+	UserID     int64       `json:"user_id"`
+	Token      string      `json:"token"`
+	IpAddress  string      `json:"ip_address"`
+	UserAgent  pgtype.Text `json:"user_agent"`
+	DeviceType pgtype.Text `json:"device_type"`
+}
+
+type CreateRefreshTokenRow struct {
+	ID     int64 `json:"id"`
+	UserID int64 `json:"user_id"`
+}
+
+func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (CreateRefreshTokenRow, error) {
+	row := q.db.QueryRow(ctx, createRefreshToken,
+		arg.UserID,
+		arg.Token,
+		arg.IpAddress,
+		arg.UserAgent,
+		arg.DeviceType,
+	)
+	var i CreateRefreshTokenRow
+	err := row.Scan(&i.ID, &i.UserID)
+	return i, err
+}
+
 const getUserByEmail = `-- name: GetUserByEmail :one
 SELECT 
     id,

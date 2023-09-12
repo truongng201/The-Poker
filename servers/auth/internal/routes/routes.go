@@ -19,6 +19,26 @@ func Routes(e *echo.Echo, controller controller.AppController) *echo.Echo {
 		return controller.SigninController.Execute(c)
 	})
 
+	api.POST("/signup", func(c echo.Context) error {
+		return controller.SignupController.Execute(c)
+	})
+
+	api.POST("/signout", func(c echo.Context) error {
+		return controller.SignoutController.Execute(c)
+	})
+
+	api.POST("/reset-password", func(c echo.Context) error {
+		return controller.ResetPasswordController.Execute(c)
+	})
+
+	api.POST("/forgot-password", func(c echo.Context) error {
+		return controller.ForgotPasswordController.Execute(c)
+	})
+
+	api.POST("/verify-email", func(c echo.Context) error {
+		return controller.VerifyEmailController.Execute(c)
+	})
+
 	return e
 
 }
