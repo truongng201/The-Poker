@@ -9,9 +9,11 @@ import (
 )
 
 type Querier interface {
+	CheckEmailExists(ctx context.Context, email string) (CheckEmailExistsRow, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
 	FindUserByEmail(ctx context.Context, email string) (FindUserByEmailRow, error)
 	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
+	ResetPassword(ctx context.Context, arg ResetPasswordParams) error
 	VerifyEmail(ctx context.Context, email string) error
 }
 

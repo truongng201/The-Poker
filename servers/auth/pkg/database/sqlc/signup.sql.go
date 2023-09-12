@@ -9,6 +9,35 @@ import (
 	"context"
 )
 
+const checkEmailExists = `-- name: CheckEmailExists :one
+SELECT 
+    id,
+    user_id,
+    email,
+    is_verified
+FROM users
+WHERE email = $1
+`
+
+type CheckEmailExistsRow struct {
+	ID         int64  `json:"id"`
+	UserID     string `json:"user_id"`
+	Email      string `json:"email"`
+	IsVerified bool   `json:"is_verified"`
+}
+
+func (q *Queries) CheckEmailExists(ctx context.Context, email string) (CheckEmailExistsRow, error) {
+	row := q.db.QueryRow(ctx, checkEmailExists, email)
+	var i CheckEmailExistsRow
+	err := row.Scan(
+		&i.ID,
+		&i.UserID,
+		&i.Email,
+		&i.IsVerified,
+	)
+	return i, err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
     user_id,
@@ -44,34 +73,5 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	)
 	var i CreateUserRow
 	err := row.Scan(&i.UserID, &i.Email)
-	return i, err
-}
-
-const findUserByEmail = `-- name: FindUserByEmail :one
-SELECT 
-    id,
-    user_id,
-    email,
-    is_verified
-FROM users
-WHERE email = $1
-`
-
-type FindUserByEmailRow struct {
-	ID         int64  `json:"id"`
-	UserID     string `json:"user_id"`
-	Email      string `json:"email"`
-	IsVerified bool   `json:"is_verified"`
-}
-
-func (q *Queries) FindUserByEmail(ctx context.Context, email string) (FindUserByEmailRow, error) {
-	row := q.db.QueryRow(ctx, findUserByEmail, email)
-	var i FindUserByEmailRow
-	err := row.Scan(
-		&i.ID,
-		&i.UserID,
-		&i.Email,
-		&i.IsVerified,
-	)
 	return i, err
 }

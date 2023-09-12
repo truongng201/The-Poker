@@ -11,7 +11,7 @@ INSERT INTO users (
     $4
 ) RETURNING user_id, email;
 
--- name: FindUserByEmail :one
+-- name: CheckEmailExists :one
 SELECT 
     id,
     user_id,
