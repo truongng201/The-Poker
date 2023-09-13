@@ -6,6 +6,7 @@ import (
 	routes "auth-service/internal/routes"
 	utils "auth-service/pkg/utils"
 
+	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	log "github.com/sirupsen/logrus"
@@ -15,6 +16,9 @@ func main() {
 	config.LoadConfig()
 
 	e := echo.New()
+	
+	e.Validator = &utils.CustomValidator{Validator: validator.New()}
+	e.Binder = &utils.CustomBinder{}
 
 	controller := controller.AppController{}
 

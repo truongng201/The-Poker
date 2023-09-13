@@ -13,18 +13,10 @@ type ForgotPasswordController struct{}
 func (controller *ForgotPasswordController) Validate(c echo.Context) (bool, error) {
 	var req forgotPasswordRequest
 	if err := c.Bind(&req); err != nil {
-		return false, c.JSON(400, &Response{
-			Success: false,
-			Message: "Invalid request body",
-			Payload: "",
-		})
+		return false, err
 	}
-	if err := c.Validate(req); err != nil {
-		return false, c.JSON(400, &Response{
-			Success: false,
-			Message: "Invalid request body",
-			Payload: "",
-		})
+	if err := c.Validate(&req); err != nil {
+		return false, err
 	}
 	return true, nil
 }
