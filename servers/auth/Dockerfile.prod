@@ -23,19 +23,24 @@ COPY . .
 
 # Build the application
 RUN cd cmd && \
-    go build -ldflags="-X ${SERVICE_NAME}/pkg/controller.Version=${SERVICE_VERSION}" -o server .
+    go build -ldflags="-X ${SERVICE_NAME}/internal/controller.Version=${SERVICE_VERSION}" -o server .
 
 # Move to /dist directory as the place for resulting binary folder
 WORKDIR /dist
 
-# Copy binary from build to main folder
-RUN cp /build/cmd/server .
+# Copy binary and config from build to main folder
+RUN cp /build/cmd/server . && \
+    cp /build/config/config.yml .  
+
+ENTRYPOINT ["./server"]
 
 # Build a small image
 FROM scratch AS release 
 
 # Copy binary from build to main folder
 COPY --from=builder /dist/server /
+# Copy config from build to build/config folder
+COPY --from=builder /dist/config.yml /build/config/
 
 # Command to run
 ENTRYPOINT ["/server"]
