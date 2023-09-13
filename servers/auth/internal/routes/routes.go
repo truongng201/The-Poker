@@ -1,13 +1,29 @@
 package routes
 
 import (
+	"log"
+	"net/http"
+
 	controller "auth-service/internal/controller"
 
+	"github.com/go-playground/validator"
 	"github.com/labstack/echo/v4"
 )
 
-func Routes(e *echo.Echo, controller controller.AppController) *echo.Echo {
+type CustomValidator struct {
+	validator *validator.Validate
+}
 
+func (cv *CustomValidator) Validate(i interface{}) error {
+	log.Println(i)
+	if err := cv.validator.Struct(i); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	return nil
+}
+
+func Routes(e *echo.Echo, controller controller.AppController) *echo.Echo {
+	e.Validator = &CustomValidator{validator: validator.New()}
 	// ApiRoutes
 	api := e.Group("/auth")
 
