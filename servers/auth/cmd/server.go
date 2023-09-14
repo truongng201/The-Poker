@@ -1,12 +1,17 @@
 package main
 
 import (
+	"context"
+	"fmt"
+
 	config "auth-service/config"
 	controller "auth-service/internal/controller"
 	routes "auth-service/internal/routes"
+	database "auth-service/pkg/database/sqlc"
 	utils "auth-service/pkg/utils"
 
 	"github.com/go-playground/validator"
+	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	log "github.com/sirupsen/logrus"
@@ -15,12 +20,19 @@ import (
 func main() {
 	config.LoadConfig()
 
+	connpool, err := pgxpool.New(context.Background(), config.Con.DatabaseURI)
+	if err != nil {
+		log.Error(fmt.Sprintf("Unable to connect to database at %s", config.Con.DatabaseURI))
+	}
+
+	store := database.NewStore(connpool)
+
 	e := echo.New()
-	
+
 	e.Validator = &utils.CustomValidator{Validator: validator.New()}
 	e.Binder = &utils.CustomBinder{}
 
-	controller := controller.AppController{}
+	controller := &controller.AppController{Store: store}
 
 	e = routes.Routes(e, controller)
 

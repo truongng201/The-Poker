@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"auth-service/pkg/utils"
+
 	"github.com/labstack/echo/v4"
 )
 
@@ -26,7 +28,7 @@ func (controller *VerifyEmailController) Execute(c echo.Context) error {
 		return err
 	}
 
-	return c.JSON(200, &Response{
+	return c.JSON(200, &utils.Response{
 		Success: true,
 		Message: "Verify email success",
 		Payload: "",

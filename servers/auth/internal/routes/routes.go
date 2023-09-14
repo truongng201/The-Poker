@@ -6,8 +6,7 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-
-func Routes(e *echo.Echo, controller controller.AppController) *echo.Echo {
+func Routes(e *echo.Echo, controller *controller.AppController) *echo.Echo {
 	// ApiRoutes
 	api := e.Group("/auth")
 
@@ -16,7 +15,7 @@ func Routes(e *echo.Echo, controller controller.AppController) *echo.Echo {
 	})
 
 	api.POST("/signin", func(c echo.Context) error {
-		return controller.SigninController.Execute(c)
+		return controller.SigninController.Execute(c, controller.Store)
 	})
 
 	api.POST("/signup", func(c echo.Context) error {

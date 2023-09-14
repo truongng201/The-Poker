@@ -1,5 +1,9 @@
 package controller
 
+import (
+	database "auth-service/pkg/database/sqlc"
+)
+
 type AppController struct {
 	HealthCheckController    HealthCheckController
 	SigninController         SigninController
@@ -8,10 +12,5 @@ type AppController struct {
 	ResetPasswordController  ResetPasswordController
 	ForgotPasswordController ForgotPasswordController
 	VerifyEmailController    VerifyEmailController
-}
-
-type Response struct {
-	Success bool        `json:"success"`
-	Message string      `json:"message"`
-	Payload interface{} `json:"payload"`
+	Store                    database.Store
 }
