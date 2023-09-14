@@ -11,7 +11,7 @@ func Routes(e *echo.Echo, controller *controller.AppController) *echo.Echo {
 	api := e.Group("/auth")
 
 	api.GET("/health", func(c echo.Context) error {
-		return controller.HealthCheckController.Execute(c)
+		return controller.HealthCheckController.Execute(c, controller.Store)
 	})
 
 	api.POST("/signin", func(c echo.Context) error {

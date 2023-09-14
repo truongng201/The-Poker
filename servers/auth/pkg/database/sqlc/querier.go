@@ -16,6 +16,7 @@ type Querier interface {
 	FindUserByEmail(ctx context.Context, email string) (FindUserByEmailRow, error)
 	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
 	GetUserByRefreshToken(ctx context.Context, arg GetUserByRefreshTokenParams) (GetUserByRefreshTokenRow, error)
+	HealthCheck(ctx context.Context) (int32, error)
 	ResetPassword(ctx context.Context, arg ResetPasswordParams) error
 	VerifyEmail(ctx context.Context, email string) error
 }
