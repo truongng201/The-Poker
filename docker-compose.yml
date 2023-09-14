@@ -26,17 +26,6 @@ services:
     ports:
       - 8081:8080
 
-  client:
-    image: node:18.10.0-alpine3.14
-    platform: linux/amd64 # this is needed for M1 M2 Macs
-    hostname: client
-    container_name: client
-    restart: unless-stopped
-    volumes:
-      - ./client:/app
-    ports:
-      - 3000:3000
-
   database:
     image: postgres:14.0-alpine
     environment:
@@ -45,3 +34,12 @@ services:
       POSTGRES_DB: beta-db
     ports:
       - 5432:5432
+
+  cache:
+    image: redis:6.2-alpine
+    container_name: cache
+    hostname: cache
+    restart: unless-stopped
+    command: redis-server --requirepass admin --appendonly yes
+    ports:
+      - 6379:6379

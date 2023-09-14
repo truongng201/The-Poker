@@ -1,11 +1,12 @@
 package controller
 
 import (
+	"time"
+
 	config "auth-service/config"
 	database "auth-service/pkg/database"
 	sqlc "auth-service/pkg/database/sqlc"
 	utils "auth-service/pkg/utils"
-	"time"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -119,6 +120,37 @@ func (controller *SigninController) generateNewRefreshToken(
 	return res, true, nil
 }
 
+func (controller *SigninController) generateNewAccessToken(
+	c echo.Context,
+	store database.Store,
+	userInfo sqlc.GetUserByEmailRow,
+) (string, bool, error) {
+	new_access_token, err := utils.GenerateJWT(&jwt.MapClaims{
+		"iat": time.Now().Local(),
+		"exp": time.Now().Minute() + config.Con.JWT.RefreshTokenExpirationTime,
+	}, config.Con.JWT.SecretKey)
+	if err != nil{
+		return "", false, c.JSON(500, &utils.Response{
+			Success: false,
+			Message: "Internal server error",
+			Payload: "",
+		})
+	}
+
+	err = utils.RedisClient.Set(
+		c.Request().Context(), new_access_token, userInfo.UserID, time.Duration(config.Con.JWT.AccessTokenExpirationTime)*time.Minute,
+	).Err()
+
+	if err != nil {
+		return "", false, c.JSON(500, &utils.Response{
+			Success: false,
+			Message: "Internal server error",
+			Payload: "",
+		})
+	}
+	return new_access_token,true, nil
+}
+
 func (controller *SigninController) Execute(c echo.Context, store database.Store) error {
 	var req signinRequest
 
@@ -139,7 +171,12 @@ func (controller *SigninController) Execute(c echo.Context, store database.Store
 		return err
 	}
 
-	tokenInfo, ok, err := controller.generateNewRefreshToken(c, store, userInfo)
+	refreshTokenInfo, ok, err := controller.generateNewRefreshToken(c, store, userInfo)
+	if !ok {
+		return err
+	}
+
+	accessToken, ok, err := controller.generateNewAccessToken(c, store, userInfo)
 	if !ok {
 		return err
 	}
@@ -148,8 +185,8 @@ func (controller *SigninController) Execute(c echo.Context, store database.Store
 		Success: true,
 		Message: "Sign in success",
 		Payload: &signinResponsePayload{
-			AccessToken:  "access_token",
-			RefreshToken: tokenInfo.Token,
+			AccessToken:  accessToken,
+			RefreshToken: refreshTokenInfo.Token,
 		},
 	})
 }

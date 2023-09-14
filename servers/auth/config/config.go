@@ -10,7 +10,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-type config struct {
+type ConfigType struct {
 	// Database
 	DatabaseURI string
 	// Server environment
@@ -41,9 +41,9 @@ type RedisConfig struct {
 	WriteTimeout int
 }
 
-var Con config
+var Con ConfigType
 
-func LoadConfig() (config config, err error) {
+func LoadConfig() (config ConfigType, err error) {
 	log.Info("Loading config file")
 
 	Config := &Con

@@ -2,16 +2,16 @@ DatabaseURI: postgres://admin:admin@database:5432/beta-db?sslmode=disable
 Environment: development
 AllowedOrigins: ["*"]
 JWT:
-  - Secretkey: "secret"
-  - RefreshTokenExpirationTime: 43200 # in minutes (30 days)
-  - AccessTokenExpirationTime: 60 # in minutes
+  Secretkey: "secret"
+  RefreshTokenExpirationTime: 43200 # in minutes (30 days)
+  AccessTokenExpirationTime: 60 # in minutes
 Redis:
-  - Address: "redis:6379"
-  - Password: "redis"
-  - DB: 0
-  - PoolSize: 10
-  - MinIdleConns: 10
-  - IdleTimeout: 300
-  - MaxConnAge: 600
-  - ReadTimeout: 300
-  - WriteTimeout: 300
+  Address: "cache:6379"
+  Password: "admin"
+  DB: 0
+  PoolSize: 10
+  MinIdleConns: 10
+  IdleTimeout: 300
+  MaxConnAge: 600
+  ReadTimeout: 300
+  WriteTimeout: 300
