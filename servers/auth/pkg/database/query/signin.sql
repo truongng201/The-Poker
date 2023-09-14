@@ -23,4 +23,4 @@ INSERT INTO refresh_tokens (
     $3,
     $4,
     $5
-) RETURNING id, user_id;
+) RETURNING id, user_id, token;

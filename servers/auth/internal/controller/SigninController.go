@@ -1,13 +1,15 @@
 package controller
 
 import (
+	config "auth-service/config"
 	database "auth-service/pkg/database"
 	sqlc "auth-service/pkg/database/sqlc"
-	"auth-service/pkg/utils"
+	utils "auth-service/pkg/utils"
+	"time"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
-	"github.com/labstack/gommon/log"
 )
 
 type signinRequest struct {
@@ -43,6 +45,14 @@ func (controller *SigninController) checkEmailExists(
 		})
 	}
 
+	if !res.IsVerified {
+		return res, false, c.JSON(200, &utils.Response{
+			Success: false,
+			Message: "Email not verified",
+			Payload: "",
+		})
+	}
+
 	return res, true, nil
 }
 
@@ -68,19 +78,36 @@ func (controller *SigninController) generateNewRefreshToken(
 	store database.Store,
 	userInfo sqlc.GetUserByEmailRow,
 ) (sqlc.CreateRefreshTokenRow, bool, error) {
+	new_refresh_token, err := utils.GenerateJWT(&jwt.MapClaims{
+		"sub": map[string]interface{}{
+			"user_id":  userInfo.UserID,
+			"username": userInfo.Username,
+			"email":    userInfo.Email,
+		},
+		"iat": time.Now().Local(),
+		"exp": time.Now().Minute() + config.Con.JWTRefreshTokenExpireTime,
+	}, config.Con.JWTSecretKey)
+
+	if err != nil {
+		return sqlc.CreateRefreshTokenRow{}, false, c.JSON(500, &utils.Response{
+			Success: false,
+			Message: "Internal server error",
+			Payload: "",
+		})
+	}
+
 	res, err := store.CreateRefreshToken(c.Request().Context(), sqlc.CreateRefreshTokenParams{
 		UserID: userInfo.ID,
 		DeviceType: pgtype.Text{
-			String: "device_type",
-			Valid:  true,
+			String: c.Request().Host,
 		},
 		UserAgent: pgtype.Text{
-			String: "user_agent",
-			Valid:  true,
+			String: c.Request().UserAgent(),
 		},
-		IpAddress: "ip_address",
-		Token:     "token",
+		IpAddress: c.Request().RemoteAddr,
+		Token:     new_refresh_token,
 	})
+
 	if err != nil {
 		return res, false, c.JSON(200, &utils.Response{
 			Success: false,
@@ -116,14 +143,13 @@ func (controller *SigninController) Execute(c echo.Context, store database.Store
 	if !ok {
 		return err
 	}
-	log.Info(tokenInfo)
 
 	return c.JSON(200, &utils.Response{
 		Success: true,
 		Message: "Sign in success",
 		Payload: &signinResponsePayload{
 			AccessToken:  "access_token",
-			RefreshToken: "refresh_token",
+			RefreshToken: tokenInfo.Token,
 		},
 	})
 }

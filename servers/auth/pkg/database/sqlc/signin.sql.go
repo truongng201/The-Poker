@@ -24,7 +24,7 @@ INSERT INTO refresh_tokens (
     $3,
     $4,
     $5
-) RETURNING id, user_id
+) RETURNING id, user_id, token
 `
 
 type CreateRefreshTokenParams struct {
@@ -36,8 +36,9 @@ type CreateRefreshTokenParams struct {
 }
 
 type CreateRefreshTokenRow struct {
-	ID     int64 `json:"id"`
-	UserID int64 `json:"user_id"`
+	ID     int64  `json:"id"`
+	UserID int64  `json:"user_id"`
+	Token  string `json:"token"`
 }
 
 func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (CreateRefreshTokenRow, error) {
@@ -49,7 +50,7 @@ func (q *Queries) CreateRefreshToken(ctx context.Context, arg CreateRefreshToken
 		arg.DeviceType,
 	)
 	var i CreateRefreshTokenRow
-	err := row.Scan(&i.ID, &i.UserID)
+	err := row.Scan(&i.ID, &i.UserID, &i.Token)
 	return i, err
 }
 

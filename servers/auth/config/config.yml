@@ -1,3 +1,5 @@
 DatabaseURI: postgres://admin:admin@database:5432/beta-db?sslmode=disable
 Environment: development
 AllowedOrigins: ["*"]
+JWTScretKey: "secret"
+JWTRefreshTokenExpireTime: 43200 # in minutes (30 days)

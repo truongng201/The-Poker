@@ -17,6 +17,10 @@ type config struct {
 	Environment string
 	// Allowed origins
 	AllowedOrigins []string
+	// JWT
+	JWTSecretKey string
+	// JWT Refresh Token Expiry Time
+	JWTRefreshTokenExpireTime int
 }
 
 var Con config
