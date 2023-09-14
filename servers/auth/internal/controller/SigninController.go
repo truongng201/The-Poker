@@ -85,8 +85,8 @@ func (controller *SigninController) generateNewRefreshToken(
 			"email":    userInfo.Email,
 		},
 		"iat": time.Now().Local(),
-		"exp": time.Now().Minute() + config.Con.JWTRefreshTokenExpireTime,
-	}, config.Con.JWTSecretKey)
+		"exp": time.Now().Minute() + config.Con.JWT.RefreshTokenExpirationTime,
+	}, config.Con.JWT.SecretKey)
 
 	if err != nil {
 		return sqlc.CreateRefreshTokenRow{}, false, c.JSON(500, &utils.Response{

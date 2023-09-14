@@ -1,7 +1,8 @@
 package controller
 
 import (
-	"auth-service/pkg/utils"
+	database "auth-service/pkg/database"
+	utils "auth-service/pkg/utils"
 
 	"github.com/labstack/echo/v4"
 )
@@ -12,19 +13,52 @@ type forgotPasswordRequest struct {
 
 type ForgotPasswordController struct{}
 
-func (controller *ForgotPasswordController) Validate(c echo.Context) (bool, error) {
-	var req forgotPasswordRequest
-	if err := c.Bind(&req); err != nil {
-		return false, err
+func (controller *ForgotPasswordController) checkEmailExists(
+	c echo.Context,
+	store database.Store,
+	req forgotPasswordRequest,
+) (bool, error) {
+	userInfo, err := store.FindUserByEmail(c.Request().Context(), req.Email)
+	if err != nil {
+		if err.Error() == "no rows in result set" {
+			return false, c.JSON(200, &utils.Response{
+				Success: false,
+				Message: "Email not found",
+				Payload: "",
+			})
+		}
+		return false, c.JSON(500, &utils.Response{
+			Success: false,
+			Message: "Internal server error",
+			Payload: "",
+		})
 	}
-	if err := c.Validate(&req); err != nil {
-		return false, err
+
+	if !userInfo.IsVerified {
+		return false, c.JSON(200, &utils.Response{
+			Success: false,
+			Message: "Email not verified",
+			Payload: "",
+		})
 	}
+
 	return true, nil
 }
 
-func (controller *ForgotPasswordController) Execute(c echo.Context) error {
-	if ok, err := controller.Validate(c); !ok {
+func (controller *ForgotPasswordController) Execute(
+	c echo.Context, 
+	store database.Store,
+) error {
+	var req forgotPasswordRequest
+	if err := c.Bind(&req); err != nil {
+		return err
+	}
+	if err := c.Validate(&req); err != nil {
+		return err
+	}
+
+	ok, err := controller.checkEmailExists(c, store, req)
+	if !ok {
 		return err
 	}
 

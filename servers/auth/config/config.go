@@ -18,9 +18,27 @@ type config struct {
 	// Allowed origins
 	AllowedOrigins []string
 	// JWT
-	JWTSecretKey string
-	// JWT Refresh Token Expiry Time
-	JWTRefreshTokenExpireTime int
+	JWT JWTConfig
+	// Redis
+	Redis RedisConfig
+}
+
+type JWTConfig struct {
+	SecretKey                  string
+	AccessTokenExpirationTime  int
+	RefreshTokenExpirationTime int
+}
+
+type RedisConfig struct {
+	Address      string
+	Password     string
+	DB           int
+	PoolSize     int
+	MinIdleConns int
+	IdleTimeout  int
+	MaxConnAge   int
+	ReadTimeout  int
+	WriteTimeout int
 }
 
 var Con config
