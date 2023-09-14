@@ -1,7 +1,7 @@
 package controller
 
 import (
-	database "auth-service/pkg/database/sqlc"
+	database "auth-service/pkg/database"
 )
 
 type AppController struct {

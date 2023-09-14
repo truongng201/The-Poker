@@ -1,10 +1,13 @@
 package controller
 
 import (
-	database "auth-service/pkg/database/sqlc"
+	database "auth-service/pkg/database"
+	sqlc "auth-service/pkg/database/sqlc"
 	"auth-service/pkg/utils"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/gommon/log"
 )
 
 type signinRequest struct {
@@ -23,7 +26,7 @@ func (controller *SigninController) checkEmailExists(
 	c echo.Context,
 	store database.Store,
 	req signinRequest,
-) (database.GetUserByEmailRow, bool, error) {
+) (sqlc.GetUserByEmailRow, bool, error) {
 	res, err := store.GetUserByEmail(c.Request().Context(), req.Email)
 	if err != nil {
 		if err.Error() == "no rows in result set" {
@@ -44,10 +47,10 @@ func (controller *SigninController) checkEmailExists(
 }
 
 func (controller *SigninController) checkPassword(
-	c echo.Context, 
-	store database.Store, 
-	req signinRequest, 
-	res database.GetUserByEmailRow,
+	c echo.Context,
+	store database.Store,
+	req signinRequest,
+	res sqlc.GetUserByEmailRow,
 ) (bool, error) {
 	if !utils.CheckPassword(req.Password, res.HashedPassword) {
 		return false, c.JSON(200, &utils.Response{
@@ -60,6 +63,35 @@ func (controller *SigninController) checkPassword(
 	return true, nil
 }
 
+func (controller *SigninController) generateNewRefreshToken(
+	c echo.Context,
+	store database.Store,
+	userInfo sqlc.GetUserByEmailRow,
+) (sqlc.CreateRefreshTokenRow, bool, error) {
+	res, err := store.CreateRefreshToken(c.Request().Context(), sqlc.CreateRefreshTokenParams{
+		UserID: userInfo.ID,
+		DeviceType: pgtype.Text{
+			String: "device_type",
+			Valid:  true,
+		},
+		UserAgent: pgtype.Text{
+			String: "user_agent",
+			Valid:  true,
+		},
+		IpAddress: "ip_address",
+		Token:     "token",
+	})
+	if err != nil {
+		return res, false, c.JSON(200, &utils.Response{
+			Success: false,
+			Message: "Sign in failed",
+			Payload: "",
+		})
+	}
+
+	return res, true, nil
+}
+
 func (controller *SigninController) Execute(c echo.Context, store database.Store) error {
 	var req signinRequest
 
@@ -70,15 +102,21 @@ func (controller *SigninController) Execute(c echo.Context, store database.Store
 		return err
 	}
 
-	res, ok, err := controller.checkEmailExists(c, store, req)
+	userInfo, ok, err := controller.checkEmailExists(c, store, req)
 	if !ok {
 		return err
 	}
 
-	ok, err = controller.checkPassword(c, store, req, res)
+	ok, err = controller.checkPassword(c, store, req, userInfo)
 	if !ok {
 		return err
 	}
+
+	tokenInfo, ok, err := controller.generateNewRefreshToken(c, store, userInfo)
+	if !ok {
+		return err
+	}
+	log.Info(tokenInfo)
 
 	return c.JSON(200, &utils.Response{
 		Success: true,

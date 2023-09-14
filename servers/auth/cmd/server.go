@@ -7,7 +7,7 @@ import (
 	config "auth-service/config"
 	controller "auth-service/internal/controller"
 	routes "auth-service/internal/routes"
-	database "auth-service/pkg/database/sqlc"
+	database "auth-service/pkg/database"
 	utils "auth-service/pkg/utils"
 
 	"github.com/go-playground/validator"

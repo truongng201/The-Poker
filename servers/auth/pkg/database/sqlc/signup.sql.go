@@ -7,6 +7,8 @@ package database
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const checkEmailExists = `-- name: CheckEmailExists :one
@@ -43,20 +45,23 @@ INSERT INTO users (
     user_id,
     username,
     email,
-    hashed_password
+    hashed_password,
+    image_url
 ) VALUES (
     $1,
     $2,
     $3,
-    $4
+    $4,
+    $5
 ) RETURNING user_id, email
 `
 
 type CreateUserParams struct {
-	UserID         string `json:"user_id"`
-	Username       string `json:"username"`
-	Email          string `json:"email"`
-	HashedPassword string `json:"hashed_password"`
+	UserID         string      `json:"user_id"`
+	Username       string      `json:"username"`
+	Email          string      `json:"email"`
+	HashedPassword string      `json:"hashed_password"`
+	ImageUrl       pgtype.Text `json:"image_url"`
 }
 
 type CreateUserRow struct {
@@ -70,6 +75,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 		arg.Username,
 		arg.Email,
 		arg.HashedPassword,
+		arg.ImageUrl,
 	)
 	var i CreateUserRow
 	err := row.Scan(&i.UserID, &i.Email)
