@@ -129,7 +129,7 @@ func (controller *SigninController) generateNewAccessToken(
 		"iat": time.Now().Local(),
 		"exp": time.Now().Minute() + config.Con.JWT.RefreshTokenExpirationTime,
 	}, config.Con.JWT.SecretKey)
-	if err != nil{
+	if err != nil {
 		return "", false, c.JSON(500, &utils.Response{
 			Success: false,
 			Message: "Internal server error",
@@ -148,7 +148,7 @@ func (controller *SigninController) generateNewAccessToken(
 			Payload: "",
 		})
 	}
-	return new_access_token,true, nil
+	return new_access_token, true, nil
 }
 
 func (controller *SigninController) Execute(c echo.Context, store database.Store) error {

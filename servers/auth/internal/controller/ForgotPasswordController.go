@@ -46,7 +46,7 @@ func (controller *ForgotPasswordController) checkEmailExists(
 }
 
 func (controller *ForgotPasswordController) Execute(
-	c echo.Context, 
+	c echo.Context,
 	store database.Store,
 ) error {
 	var req forgotPasswordRequest

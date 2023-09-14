@@ -39,10 +39,10 @@ func (controller *HealthCheckController) checkCacheConnection(c echo.Context) (b
 	return true, nil
 }
 
-func (controller *HealthCheckController) checkDatabaseConnection(	
+func (controller *HealthCheckController) checkDatabaseConnection(
 	c echo.Context,
 	store database.Store,
-)(bool, error) {
+) (bool, error) {
 	_, err := store.HealthCheck(c.Request().Context())
 	if err != nil {
 		return false, c.JSON(500, &HealthCheck{
@@ -54,14 +54,12 @@ func (controller *HealthCheckController) checkDatabaseConnection(
 	return true, nil
 }
 
-
 func (controller *HealthCheckController) Execute(c echo.Context, store database.Store) error {
 	if Version == "" {
 		Version = "development"
 	} else {
 		Version = Version[:7]
 	}
-
 
 	ok, err := controller.checkCacheConnection(c)
 	if !ok {

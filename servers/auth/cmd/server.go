@@ -19,13 +19,13 @@ import (
 
 func main() {
 	config.LoadConfig()
-	
+
 	connpool, err := pgxpool.New(context.Background(), config.Con.DatabaseURI)
 	if err != nil {
 		log.Error(fmt.Sprintf("Unable to connect to database at %s", config.Con.DatabaseURI))
 	}
 
-	utils.NewRedisClient(config.Con)	
+	utils.NewRedisClient(config.Con)
 
 	store := database.NewStore(connpool)
 

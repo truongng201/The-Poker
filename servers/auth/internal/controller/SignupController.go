@@ -5,6 +5,7 @@ import (
 	sqlc "auth-service/pkg/database/sqlc"
 	"auth-service/pkg/utils"
 	"fmt"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -76,6 +77,27 @@ func (controller *SignupController) createNewUser(
 	return userInfo, true, nil
 }
 
+func (controller *SignupController) generateVerifyEmailToken(
+	c echo.Context,
+	userInfo sqlc.CreateUserRow,
+) (string, bool, error) {
+	verifyEmailToken := uuid.New().String()
+	err := utils.RedisClient.Set(
+		c.Request().Context(),
+		userInfo.UserID,
+		verifyEmailToken,
+		time.Duration(15)*time.Minute,
+	).Err()
+	if err != nil {
+		return "", false, c.JSON(200, &utils.Response{
+			Success: false,
+			Message: "Sign up failed",
+			Payload: "",
+		})
+	}
+	return verifyEmailToken, true, nil
+}
+
 func (controller *SignupController) Execute(c echo.Context, store database.Store) error {
 	var req signupRequest
 	if err := c.Bind(&req); err != nil {
@@ -100,6 +122,11 @@ func (controller *SignupController) Execute(c echo.Context, store database.Store
 	}
 
 	userInfo, ok, err := controller.createNewUser(c, store, req, hashedPassword)
+	if !ok {
+		return err
+	}
+
+	_, ok, err = controller.generateVerifyEmailToken(c, userInfo)
 	if !ok {
 		return err
 	}
