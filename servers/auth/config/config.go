@@ -15,6 +15,11 @@ type ConfigType struct {
 	DatabaseURI string
 	// Server environment
 	Environment string
+	// Client Url
+	Domains struct {
+		Client string
+		Server string
+	}
 	// Allowed origins
 	AllowedOrigins []string
 	// JWT

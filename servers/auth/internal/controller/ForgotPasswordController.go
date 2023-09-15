@@ -24,7 +24,7 @@ func (controller *ForgotPasswordController) checkEmailExists(
 	c echo.Context,
 	store database.Store,
 	req forgotPasswordRequest,
-) (sqlc.FindUserByEmailRow ,bool, error) {
+) (sqlc.FindUserByEmailRow, bool, error) {
 	userInfo, err := store.FindUserByEmail(c.Request().Context(), req.Email)
 	if err != nil {
 		if err.Error() == "no rows in result set" {
@@ -65,9 +65,9 @@ func (controller *ForgotPasswordController) sendResetPasswordEmail(
 	// Save token to cache
 	err := utils.RedisClient.Set(
 		c.Request().Context(),
-		token, 
-		userInfo.UserID, 
-		time.Duration(15) * time.Minute,
+		token,
+		userInfo.UserID,
+		time.Duration(15)*time.Minute,
 	).Err()
 	if err != nil {
 		log.Error(err)
@@ -83,7 +83,7 @@ func (controller *ForgotPasswordController) sendResetPasswordEmail(
 		"Reset password",
 		templates.GenerateResetPasswordTemplate(
 			templates.ResetPasswordTemplateData{
-				Username: userInfo.Username,
+				Username:  userInfo.Username,
 				ResetLink: fmt.Sprintf("https://beta.truongng.me/reset/%s", token),
 			},
 		),

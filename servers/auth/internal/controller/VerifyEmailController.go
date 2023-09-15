@@ -1,10 +1,14 @@
 package controller
 
 import (
+	config "auth-service/config"
 	database "auth-service/pkg/database"
 	utils "auth-service/pkg/utils"
 
+	"fmt"
+
 	"github.com/labstack/echo/v4"
+	log "github.com/sirupsen/logrus"
 )
 
 type verifyEmailRequestParam struct {
@@ -19,11 +23,8 @@ func (controller *VerifyEmailController) checkToken(
 ) (string, bool, error) {
 	email, err := utils.RedisClient.Get(c.Request().Context(), req.Token).Result()
 	if err != nil {
-		return "", false, c.JSON(200, &utils.Response{
-			Success: false,
-			Message: "Invalid token",
-			Payload: "",
-		})
+		log.Error(err)
+		return "", false, utils.ErrInternalServerRepsonse()
 	}
 	return email, true, nil
 }
@@ -36,19 +37,13 @@ func (controller *VerifyEmailController) updateIsVerified(
 ) (bool, error) {
 	err := store.VerifyEmail(c.Request().Context(), email)
 	if err != nil {
-		return false, c.JSON(500, &utils.Response{
-			Success: false,
-			Message: "Internal server error",
-			Payload: "",
-		})
+		log.Error(err)
+		return false, utils.ErrInternalServerRepsonse()
 	}
 	err = utils.RedisClient.Del(c.Request().Context(), req.Token).Err()
 	if err != nil {
-		return false, c.JSON(500, &utils.Response{
-			Success: false,
-			Message: "Internal server error",
-			Payload: "",
-		})
+		log.Error(err)
+		return false, utils.ErrInternalServerRepsonse()
 	}
 	return true, nil
 }
@@ -56,10 +51,12 @@ func (controller *VerifyEmailController) updateIsVerified(
 func (controller *VerifyEmailController) Execute(c echo.Context, store database.Store) error {
 	var reqParam verifyEmailRequestParam
 	if err := c.Bind(&reqParam); err != nil {
-		return err
+		log.Error(err)
+		return utils.ErrBadRequestResponse()
 	}
 	if err := c.Validate(&reqParam); err != nil {
-		return err
+		log.Error(err)
+		return utils.ErrBadRequestResponse()
 	}
 
 	email, ok, err := controller.checkToken(c, reqParam)
@@ -72,10 +69,5 @@ func (controller *VerifyEmailController) Execute(c echo.Context, store database.
 		return err
 	}
 
-	return c.JSON(200, &utils.Response{
-		Success: true,
-		Message: "Verify email success",
-		Payload: "",
-	})
-
+	return c.Redirect(302, fmt.Sprintf("%s/signin", config.Con.Domains.Client))
 }

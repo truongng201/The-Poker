@@ -11,6 +11,7 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
+	log "github.com/sirupsen/logrus"
 )
 
 type signinRequest struct {
@@ -33,25 +34,14 @@ func (controller *SigninController) checkEmailExists(
 	res, err := store.GetUserByEmail(c.Request().Context(), req.Email)
 	if err != nil {
 		if err.Error() == "no rows in result set" {
-			return res, false, c.JSON(200, &utils.Response{
-				Success: false,
-				Message: "Email not found",
-				Payload: "",
-			})
+			return res, false, utils.ErrNotFoundResponse()
 		}
-		return res, false, c.JSON(500, &utils.Response{
-			Success: false,
-			Message: "Internal server error",
-			Payload: "",
-		})
+		log.Error(err)
+		return res, false, utils.ErrInternalServerRepsonse()
 	}
 
 	if !res.IsVerified {
-		return res, false, c.JSON(200, &utils.Response{
-			Success: false,
-			Message: "Email not verified",
-			Payload: "",
-		})
+		return res, false, utils.ErrUnverifiedEmailResponse()
 	}
 
 	return res, true, nil
@@ -64,11 +54,7 @@ func (controller *SigninController) checkPassword(
 	res sqlc.GetUserByEmailRow,
 ) (bool, error) {
 	if !utils.CheckPassword(req.Password, res.HashedPassword) {
-		return false, c.JSON(200, &utils.Response{
-			Success: false,
-			Message: "Invalid password",
-			Payload: "",
-		})
+		return false, utils.ErrWrongCredentialsResponse()
 	}
 
 	return true, nil
@@ -86,35 +72,30 @@ func (controller *SigninController) generateNewRefreshToken(
 			"email":    userInfo.Email,
 		},
 		"iat": time.Now().Local(),
-		"exp": time.Now().Minute() + config.Con.JWT.RefreshTokenExpirationTime,
+		"exp": time.Duration(config.Con.JWT.RefreshTokenExpirationTime) * time.Minute,
 	}, config.Con.JWT.SecretKey)
 
 	if err != nil {
-		return sqlc.CreateRefreshTokenRow{}, false, c.JSON(500, &utils.Response{
-			Success: false,
-			Message: "Internal server error",
-			Payload: "",
-		})
+		return sqlc.CreateRefreshTokenRow{}, false, utils.ErrInternalServerRepsonse()
 	}
 
-	res, err := store.CreateRefreshToken(c.Request().Context(), sqlc.CreateRefreshTokenParams{
-		UserID: userInfo.ID,
-		DeviceType: pgtype.Text{
-			String: c.Request().Host,
+	res, err := store.CreateRefreshToken(
+		c.Request().Context(),
+		sqlc.CreateRefreshTokenParams{
+			UserID: userInfo.ID,
+			DeviceType: pgtype.Text{
+				String: c.Request().Host,
+			},
+			UserAgent: pgtype.Text{
+				String: c.Request().UserAgent(),
+			},
+			IpAddress: c.Request().RemoteAddr,
+			Token:     new_refresh_token,
 		},
-		UserAgent: pgtype.Text{
-			String: c.Request().UserAgent(),
-		},
-		IpAddress: c.Request().RemoteAddr,
-		Token:     new_refresh_token,
-	})
+	)
 
 	if err != nil {
-		return res, false, c.JSON(200, &utils.Response{
-			Success: false,
-			Message: "Sign in failed",
-			Payload: "",
-		})
+		return res, false, utils.ErrInternalServerRepsonse()
 	}
 
 	return res, true, nil
@@ -125,40 +106,38 @@ func (controller *SigninController) generateNewAccessToken(
 	store database.Store,
 	userInfo sqlc.GetUserByEmailRow,
 ) (string, bool, error) {
-	new_access_token, err := utils.GenerateJWT(&jwt.MapClaims{
+	newAccessToken, err := utils.GenerateJWT(&jwt.MapClaims{
 		"iat": time.Now().Local(),
-		"exp": time.Now().Minute() + config.Con.JWT.RefreshTokenExpirationTime,
+		"exp": time.Duration(config.Con.JWT.AccessTokenExpirationTime) * time.Minute,
 	}, config.Con.JWT.SecretKey)
 	if err != nil {
-		return "", false, c.JSON(500, &utils.Response{
-			Success: false,
-			Message: "Internal server error",
-			Payload: "",
-		})
+		return "", false, utils.ErrInternalServerRepsonse()
 	}
 
 	err = utils.RedisClient.Set(
-		c.Request().Context(), new_access_token, userInfo.UserID, time.Duration(config.Con.JWT.AccessTokenExpirationTime)*time.Minute,
+		c.Request().Context(),
+		newAccessToken,
+		userInfo.UserID,
+		time.Duration(config.Con.JWT.AccessTokenExpirationTime)*time.Minute,
 	).Err()
 
 	if err != nil {
-		return "", false, c.JSON(500, &utils.Response{
-			Success: false,
-			Message: "Internal server error",
-			Payload: "",
-		})
+		log.Error(err)
+		return "", false, utils.ErrInternalServerRepsonse()
 	}
-	return new_access_token, true, nil
+	return newAccessToken, true, nil
 }
 
 func (controller *SigninController) Execute(c echo.Context, store database.Store) error {
 	var req signinRequest
 
 	if err := c.Bind(&req); err != nil {
-		return err
+		log.Error(err)
+		return utils.ErrBadRequestResponse()
 	}
 	if err := c.Validate(&req); err != nil {
-		return err
+		log.Error(err)
+		return utils.ErrBadRequestResponse()
 	}
 
 	userInfo, ok, err := controller.checkEmailExists(c, store, req)

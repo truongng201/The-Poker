@@ -1,6 +1,7 @@
 package controller
 
 import (
+	config "auth-service/config"
 	database "auth-service/pkg/database"
 	sqlc "auth-service/pkg/database/sqlc"
 	templates "auth-service/pkg/templates/email"
@@ -33,22 +34,16 @@ func (controller *SignupController) checkEmailExists(
 	req signupRequest,
 ) (bool, error) {
 	_, err := store.CheckEmailExists(c.Request().Context(), req.Email)
+
 	if err != nil {
 		if err.Error() == "no rows in result set" {
 			return true, nil
 		}
-		return false, c.JSON(200, &utils.Response{
-			Success: false,
-			Message: "Sign up failed",
-			Payload: "",
-		})
+		log.Error(err)
+		return false, utils.ErrInternalServerRepsonse()
 	}
 
-	return false, c.JSON(200, &utils.Response{
-		Success: false,
-		Message: "Email already exists",
-		Payload: "",
-	})
+	return false, utils.ErrEmailAlreadyExistsResponse()
 }
 
 func (controller *SignupController) createNewUser(
@@ -69,12 +64,10 @@ func (controller *SignupController) createNewUser(
 			},
 		},
 	)
+
 	if err != nil {
-		return userInfo, false, c.JSON(200, &utils.Response{
-			Success: false,
-			Message: "Sign up failed",
-			Payload: "",
-		})
+		log.Error(err)
+		return userInfo, false, utils.ErrInternalServerRepsonse()
 	}
 
 	return userInfo, true, nil
@@ -91,13 +84,12 @@ func (controller *SignupController) generateVerifyEmailToken(
 		userInfo.Email,
 		time.Duration(15)*time.Minute,
 	).Err()
+
 	if err != nil {
-		return "", false, c.JSON(200, &utils.Response{
-			Success: false,
-			Message: "Sign up failed",
-			Payload: "",
-		})
+		log.Error(err)
+		return "", false, utils.ErrInternalServerResponse()
 	}
+
 	return verifyEmailToken, true, nil
 }
 
@@ -107,26 +99,24 @@ func (controller *SignupController) sendVerifyEmail(
 	req signupRequest,
 	userInfo sqlc.CreateUserRow,
 	verifyToken string,
-) (bool, error){
+) (bool, error) {
 	err := mailer.SendEmail(
 		"Verify your email",
 		templates.GenerateVerifyEmailTemplate(templates.VerifyEmailTemplateData{
 			Username:   req.Username,
-			VerifyLink: fmt.Sprintf("https://beta.truongng.me/verify/%s", verifyToken),
+			VerifyLink: fmt.Sprintf("%s/verify-email?token=%s", config.Con.Domains.Server, verifyToken),
 		}),
 		[]string{userInfo.Email},
 		[]string{},
 		[]string{},
 		[]string{},
 	)
+
 	if err != nil {
 		log.Error(err)
-		return false, c.JSON(200, &utils.Response{
-			Success: false,
-			Message: "Sign up failed",
-			Payload: "",
-		})
+		return false, utils.ErrBadRequestResponse()
 	}
+
 	return true, nil
 }
 
@@ -137,10 +127,12 @@ func (controller *SignupController) Execute(
 ) error {
 	var req signupRequest
 	if err := c.Bind(&req); err != nil {
-		return err
+		log.Error(err)
+		return utils.ErrBadRequestResponse()
 	}
 	if err := c.Validate(&req); err != nil {
-		return err
+		log.Error(err)
+		return utils.ErrBadRequestResponse()
 	}
 
 	ok, err := controller.checkEmailExists(c, store, req)
@@ -150,11 +142,7 @@ func (controller *SignupController) Execute(
 
 	hashedPassword, err := utils.HashPassword(req.Password)
 	if err != nil {
-		return c.JSON(200, &utils.Response{
-			Success: false,
-			Message: "Sign up failed",
-			Payload: "",
-		})
+		return utils.ErrBadRequestResponse()
 	}
 
 	userInfo, ok, err := controller.createNewUser(c, store, req, hashedPassword)
@@ -172,12 +160,10 @@ func (controller *SignupController) Execute(
 		return err
 	}
 
-
-	return c.JSON(200, &utils.Response{
-		Success: true,
-		Message: "Sign up success",
-		Payload: &signupResponsePayload{
+	return utils.SuccessResponse(
+		"Sign up success",
+		&signupResponsePayload{
 			UserID: userInfo.UserID,
 		},
-	})
+	)
 }

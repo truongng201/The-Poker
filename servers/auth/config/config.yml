@@ -1,5 +1,8 @@
 DatabaseURI: postgres://admin:admin@database:5432/beta-db?sslmode=disable
 Environment: development
+Domains:
+  Client: https://beta.truongng.me
+  Server: https://beta-api-v1.truongng.me
 AllowedOrigins: ["*"]
 JWT:
   Secretkey: "secret"
