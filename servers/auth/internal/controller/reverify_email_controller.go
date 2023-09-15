@@ -25,8 +25,8 @@ func (controller *ReverifyEmailController) checkEmailExists(
 	c echo.Context,
 	store database.Store,
 	req reverifyEmailRequestBody,
-) (sqlc.FindUserByEmailRow, bool, error) {
-	userInfo, err := store.FindUserByEmail(c.Request().Context(), req.Email)
+) (sqlc.GetUserByEmailRow, bool, error) {
+	userInfo, err := store.GetUserByEmail(c.Request().Context(), req.Email)
 
 	if err != nil {
 		if err.Error() == "no rows in result set" {
@@ -41,7 +41,7 @@ func (controller *ReverifyEmailController) checkEmailExists(
 
 func (controller *ReverifyEmailController) generateVerifyEmailToken(
 	c echo.Context,
-	userInfo sqlc.FindUserByEmailRow,
+	userInfo sqlc.GetUserByEmailRow,
 ) (string, bool, error) {
 	verifyEmailToken := uuid.New().String()
 	err := utils.RedisClient.Set(
@@ -64,7 +64,7 @@ func (controller *ReverifyEmailController) sendVerificationEmail(
 	store database.Store,
 	req reverifyEmailRequestBody,
 	mailer utils.EmailSender,
-	userInfo sqlc.FindUserByEmailRow,
+	userInfo sqlc.GetUserByEmailRow,
 	verifyEmailToken string,
 ) (bool, error) {
 	err := mailer.SendEmail(

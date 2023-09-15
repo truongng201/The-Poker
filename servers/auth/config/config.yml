@@ -25,7 +25,7 @@ Timeout:
 Domains:
   Client: https://beta.truongng.me
   Server: https://beta-api-v1.truongng.me
-DatabaseURI: 
+Database:
   DatabaseType: postgres
   Host: database
   Port: 5432

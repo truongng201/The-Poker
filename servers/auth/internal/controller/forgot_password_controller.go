@@ -1,14 +1,14 @@
 package controller
 
 import (
+	"fmt"
+	"time"
+
 	config "auth-service/config"
 	database "auth-service/pkg/database"
 	sqlc "auth-service/pkg/database/sqlc"
 	templates "auth-service/pkg/templates/email"
 	utils "auth-service/pkg/utils"
-
-	"fmt"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/labstack/echo/v4"
@@ -25,8 +25,8 @@ func (controller *ForgotPasswordController) checkEmailExists(
 	c echo.Context,
 	store database.Store,
 	req forgotPasswordRequestBody,
-) (sqlc.FindUserByEmailRow, bool, error) {
-	userInfo, err := store.FindUserByEmail(c.Request().Context(), req.Email)
+) (sqlc.GetUserByEmailRow, bool, error) {
+	userInfo, err := store.GetUserByEmail(c.Request().Context(), req.Email)
 
 	if err != nil {
 		if err.Error() == "no rows in result set" {
@@ -48,7 +48,7 @@ func (controller *ForgotPasswordController) sendResetPasswordEmail(
 	store database.Store,
 	req forgotPasswordRequestBody,
 	mailer utils.EmailSender,
-	userInfo sqlc.FindUserByEmailRow,
+	userInfo sqlc.GetUserByEmailRow,
 	resetPasswordtoken string,
 ) (bool, error) {
 	err := mailer.SendEmail(
@@ -75,7 +75,7 @@ func (controller *ForgotPasswordController) sendResetPasswordEmail(
 
 func (controller *ForgotPasswordController) generateResetPasswordToken(
 	c echo.Context,
-	userInfo sqlc.FindUserByEmailRow,
+	userInfo sqlc.GetUserByEmailRow,
 ) (string, bool, error) {
 	resetPasswordToken := uuid.New().String()
 

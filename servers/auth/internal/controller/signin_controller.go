@@ -36,7 +36,7 @@ func (controller *SigninController) checkEmailExists(
 	res, err := store.GetUserByEmail(c.Request().Context(), req.Email)
 	if err != nil {
 		if err.Error() == "no rows in result set" {
-			return res, false, utils.ErrNotFoundResponse()
+			return res, false, utils.ErrNoSuchUserResponse()
 		}
 		log.Error(err)
 		return res, false, utils.ErrInternalServerRepsonse()
@@ -92,7 +92,7 @@ func (controller *SigninController) generateNewRefreshToken(
 		c.Request().Context(),
 		newRefreshToken,
 		userInfo.UserID,
-		time.Duration(config.Con.JWT.AccessTokenExpirationTime)*time.Minute,
+		time.Duration(config.Con.JWT.RefreshTokenExpirationTime)*time.Minute,
 	).Err()
 
 	if err != nil {
@@ -115,7 +115,7 @@ func (controller *SigninController) generateNewAccessToken(
 			"email":    userInfo.Email,
 		},
 		"iat": time.Now().Local(),
-		"exp": time.Duration(config.Con.JWT.AccessTokenExpirationTime) * time.Minute,
+		"exp": time.Now().Local().Add(time.Duration(config.Con.JWT.AccessTokenExpirationTime) * time.Minute),
 	}, config.Con.JWT.SecretKey)
 	if err != nil {
 		return "", false, utils.ErrInternalServerRepsonse()

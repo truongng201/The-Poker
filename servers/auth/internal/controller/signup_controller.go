@@ -1,14 +1,14 @@
 package controller
 
 import (
+	"fmt"
+	"time"
+
 	config "auth-service/config"
 	database "auth-service/pkg/database"
 	sqlc "auth-service/pkg/database/sqlc"
 	templates "auth-service/pkg/templates/email"
 	utils "auth-service/pkg/utils"
-
-	"fmt"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
@@ -33,7 +33,7 @@ func (controller *SignupController) checkEmailExists(
 	store database.Store,
 	req signupRequest,
 ) (bool, error) {
-	_, err := store.CheckEmailExists(c.Request().Context(), req.Email)
+	_, err := store.GetUserByEmail(c.Request().Context(), req.Email)
 
 	if err != nil {
 		if err.Error() == "no rows in result set" {

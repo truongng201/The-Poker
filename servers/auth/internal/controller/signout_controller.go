@@ -1,32 +1,46 @@
 package controller
 
 import (
-	"auth-service/pkg/utils"
+	config "auth-service/config"
+	utils "auth-service/pkg/utils"
 
 	"github.com/labstack/echo/v4"
+	log "github.com/sirupsen/logrus"
 )
 
 type signoutRequestBody struct {
-	Email        string `json:"email" validate:"required,email"`
 	RefreshToken string `json:"refresh_token" validate:"required"`
 	AccessToken  string `json:"access_token" validate:"required"`
 }
 
 type SignoutController struct{}
 
-func (controller *SignoutController) Validate(c echo.Context) (bool, error) {
-	var req signoutRequestBody
-	if err := c.Bind(&req); err != nil {
-		return false, err
+func (controller *SignoutController) revokeAccessToken(
+	c echo.Context,
+	req signoutRequestBody,
+) (bool, error) {
+	claims, err := utils.GetJWTClaims(req.AccessToken, config.Con.JWT.SecretKey)
+	if err != nil {
+		log.Error(err)
+		return false, utils.ErrInternalServerResponse()
 	}
-	if err := c.Validate(&req); err != nil {
-		return false, err
-	}
+	log.Info(claims)
 	return true, nil
 }
 
 func (controller *SignoutController) Execute(c echo.Context) error {
-	if ok, err := controller.Validate(c); !ok {
+	var req signoutRequestBody
+	if err := c.Bind(&req); err != nil {
+		log.Error(err)
+		return err
+	}
+	if err := c.Validate(&req); err != nil {
+		log.Error(err)
+		return err
+	}
+
+	ok, err := controller.revokeAccessToken(c, req)
+	if !ok {
 		return err
 	}
 

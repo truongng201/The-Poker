@@ -22,13 +22,14 @@ type ConfigType struct {
 }
 
 type DatabaseConfig struct {
-	DatbaseType string
-	Host        string
-	Port        int
-	User        string
-	Password    string
-	DatabaseURI string
-	SSLMode     string
+	DatbaseType  string
+	Host         string
+	Port         int
+	Username     string
+	Password     string
+	DatabaseName string
+	SSLMode      string
+	DatabaseURI  string
 }
 
 type TimeoutConfig struct {

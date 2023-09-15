@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"runtime/debug"
 
-	"auth-service/pkg/database"
+	database "auth-service/pkg/database"
 	utils "auth-service/pkg/utils"
 
 	"github.com/labstack/echo/v4"
