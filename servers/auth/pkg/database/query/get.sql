@@ -1,3 +1,18 @@
+-- name: HealthCheck :one
+SELECT 1 AS "one";
+
+-- name: GetUserByEmail :one
+SELECT 
+    id,
+    user_id,
+    email,
+    username,
+    image_url,
+    is_verified,
+    hashed_password
+FROM users
+WHERE email = $1;
+
 -- name: GetUserByRefreshToken :one
 SELECT
     users.id,
@@ -10,6 +25,3 @@ LEFT JOIN refresh_tokens
 WHERE refresh_tokens.token = $1 
     AND users.email = $2;
 
--- name: DeleteRefreshToken :exec
-DELETE FROM refresh_tokens
-WHERE token = $1;

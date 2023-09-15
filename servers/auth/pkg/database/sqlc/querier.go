@@ -9,13 +9,12 @@ import (
 )
 
 type Querier interface {
-	CheckEmailExists(ctx context.Context, email string) (CheckEmailExistsRow, error)
 	CreateRefreshToken(ctx context.Context, arg CreateRefreshTokenParams) (CreateRefreshTokenRow, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
 	DeleteRefreshToken(ctx context.Context, token string) error
-	FindUserByEmail(ctx context.Context, email string) (FindUserByEmailRow, error)
 	GetUserByEmail(ctx context.Context, email string) (GetUserByEmailRow, error)
 	GetUserByRefreshToken(ctx context.Context, arg GetUserByRefreshTokenParams) (GetUserByRefreshTokenRow, error)
+	HealthCheck(ctx context.Context) (int32, error)
 	ResetPassword(ctx context.Context, arg ResetPasswordParams) error
 	VerifyEmail(ctx context.Context, email string) error
 }

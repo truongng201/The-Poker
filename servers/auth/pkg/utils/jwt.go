@@ -1,10 +1,15 @@
 package utils
 
 import (
-	"fmt"
-
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/labstack/gommon/log"
 )
+
+type JWTClaimsAccessTokenSub struct {
+	Email    string `json:"email"`
+	UserID   string `json:"user_id"`
+	Username string `json:"username"`
+}
 
 // GenerateJWT generates a JWT
 func GenerateJWT(claims jwt.Claims, secret string) (string, error) {
@@ -20,7 +25,7 @@ func ParseJWT(tokenString, secret string) (jwt.Claims, error) {
 	})
 
 	if err != nil {
-		return nil, fmt.Errorf("error parsing JWT: %v", err)
+		return nil, err
 	}
 
 	return token.Claims, nil
@@ -31,7 +36,8 @@ func GetJWTClaims(tokenString, secret string) (jwt.MapClaims, error) {
 	claims, err := ParseJWT(tokenString, secret)
 
 	if err != nil {
-		return nil, fmt.Errorf("error getting JWT claims: %v", err)
+		log.Error(err)
+		return nil, err
 	}
 
 	return claims.(jwt.MapClaims), nil
