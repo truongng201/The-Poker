@@ -135,12 +135,12 @@ func (controller *SigninController) Execute(c echo.Context, store database.Store
 
 	if err := c.Bind(&req); err != nil {
 		log.Error(err)
-		return utils.ErrValidationResponse()
+		return err
 	}
 
 	if err := c.Validate(&req); err != nil {
 		log.Error(err)
-		return utils.ErrValidationResponse()
+		return err
 	}
 
 	userInfo, ok, err := controller.checkEmailExists(c, store, req)

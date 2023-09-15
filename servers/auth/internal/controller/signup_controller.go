@@ -128,11 +128,11 @@ func (controller *SignupController) Execute(
 	var req signupRequest
 	if err := c.Bind(&req); err != nil {
 		log.Error(err)
-		return utils.ErrValidationResponse()
+		return err
 	}
 	if err := c.Validate(&req); err != nil {
 		log.Error(err)
-		return utils.ErrValidationResponse()
+		return err
 	}
 
 	ok, err := controller.checkEmailExists(c, store, req)

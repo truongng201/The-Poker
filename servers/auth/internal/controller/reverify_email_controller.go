@@ -94,11 +94,11 @@ func (controller *ReverifyEmailController) Execute(
 	var req reverifyEmailRequestBody
 	if err := c.Bind(&req); err != nil {
 		log.Error(err)
-		return utils.ErrValidationResponse()
+		return err
 	}
 	if err := c.Validate(&req); err != nil {
 		log.Error(err)
-		return utils.ErrValidationResponse()
+		return err
 	}
 
 	userInfo, ok, err := controller.checkEmailExists(c, store, req)

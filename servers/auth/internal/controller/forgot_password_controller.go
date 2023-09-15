@@ -101,10 +101,10 @@ func (controller *ForgotPasswordController) Execute(
 	var req forgotPasswordRequestBody
 	if err := c.Bind(&req); err != nil {
 		log.Error(err)
-		return utils.ErrValidationResponse()
+		return err
 	}
 	if err := c.Validate(&req); err != nil {
-		return utils.ErrValidationResponse()
+		return err
 	}
 
 	userInfo, ok, err := controller.checkEmailExists(c, store, req)

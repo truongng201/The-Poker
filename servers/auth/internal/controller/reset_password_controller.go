@@ -78,11 +78,11 @@ func (controller *ResetPasswordController) Execute(
 	var req resetPasswordRequestBody
 	if err := c.Bind(&req); err != nil {
 		log.Error(err)
-		return utils.ErrValidationResponse()
+		return err
 	}
 	if err := c.Validate(req); err != nil {
 		log.Error(err)
-		return utils.ErrValidationResponse()
+		return err
 	}
 
 	userID, ok, err := controller.checkResetToken(c, req)

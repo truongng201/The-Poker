@@ -52,11 +52,11 @@ func (controller *VerifyEmailController) Execute(c echo.Context, store database.
 	var reqParam verifyEmailRequestParam
 	if err := c.Bind(&reqParam); err != nil {
 		log.Error(err)
-		return utils.ErrValidationResponse()
+		return err
 	}
 	if err := c.Validate(&reqParam); err != nil {
 		log.Error(err)
-		return utils.ErrValidationResponse()
+		return err
 	}
 
 	email, ok, err := controller.checkVerifyToken(c, reqParam)
