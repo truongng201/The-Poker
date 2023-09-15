@@ -23,6 +23,7 @@ const (
 	ErrBadQueryParams     = "Invalid query params"
 	ErrInternalServer     = "Internal server error"
 	ErrUnverifiedEmail    = "Email not verified"
+	ErrTokenInvalid       = "Invalid token"
 )
 
 func ErrInternalServerRepsonse() error {
@@ -109,6 +110,14 @@ func ErrUnverifiedEmailResponse() error {
 	return echo.NewHTTPError(http.StatusBadRequest, Response{
 		Success: false,
 		Message: ErrUnverifiedEmail,
+		Payload: "",
+	})
+}
+
+func ErrTokenInvalidResponse() error {
+	return echo.NewHTTPError(http.StatusBadRequest, Response{
+		Success: false,
+		Message: ErrTokenInvalid,
 		Payload: "",
 	})
 }

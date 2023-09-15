@@ -23,7 +23,7 @@ func Routes(e *echo.Echo, controller *controller.AppController) *echo.Echo {
 	})
 
 	api.POST("/signout", func(c echo.Context) error {
-		return controller.SignoutController.Execute(c)
+		return controller.SignoutController.Execute(c, controller.Store)
 	})
 
 	api.POST("/reset-password", func(c echo.Context) error {
