@@ -91,7 +91,7 @@ func (controller *SigninController) generateNewRefreshToken(
 	err = utils.RedisClient.Set(
 		c.Request().Context(),
 		newRefreshToken,
-		userInfo.Email,
+		userInfo.UserID,
 		time.Duration(config.Con.JWT.AccessTokenExpirationTime)*time.Minute,
 	).Err()
 
