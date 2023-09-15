@@ -38,6 +38,10 @@ func Routes(e *echo.Echo, controller *controller.AppController) *echo.Echo {
 		return controller.VerifyEmailController.Execute(c, controller.Store)
 	})
 
+	api.POST("/reverify-email", func(c echo.Context) error {
+		return controller.ReverifyEmailController.Execute(c, controller.Store, controller.Mailer)
+	})
+
 	return e
 
 }

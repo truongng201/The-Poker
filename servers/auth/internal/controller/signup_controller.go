@@ -82,7 +82,7 @@ func (controller *SignupController) generateVerifyEmailToken(
 		c.Request().Context(),
 		verifyEmailToken,
 		userInfo.Email,
-		time.Duration(15)*time.Minute,
+		time.Duration(config.Con.Timeout.VerifyEmailToken)*time.Minute,
 	).Err()
 
 	if err != nil {
@@ -128,11 +128,11 @@ func (controller *SignupController) Execute(
 	var req signupRequest
 	if err := c.Bind(&req); err != nil {
 		log.Error(err)
-		return utils.ErrBadRequestResponse()
+		return utils.ErrValidationResponse()
 	}
 	if err := c.Validate(&req); err != nil {
 		log.Error(err)
-		return utils.ErrBadRequestResponse()
+		return utils.ErrValidationResponse()
 	}
 
 	ok, err := controller.checkEmailExists(c, store, req)

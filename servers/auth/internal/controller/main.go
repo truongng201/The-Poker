@@ -13,6 +13,7 @@ type AppController struct {
 	ResetPasswordController  ResetPasswordController
 	ForgotPasswordController ForgotPasswordController
 	VerifyEmailController    VerifyEmailController
+	ReverifyEmailController  ReverifyEmailController
 	Store                    database.Store
 	Mailer                   utils.EmailSender
 }
