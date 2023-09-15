@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"auth-service/config"
 	"fmt"
 	"net/smtp"
 
@@ -29,11 +30,11 @@ type GmailSender struct {
 	fromEmailPassword string
 }
 
-func NewGmailSender(name string, fromEmailAddress string, fromEmailPassword string) EmailSender {
+func NewGmailSender(config config.ConfigType) EmailSender {
 	return &GmailSender{
-		name:              name,
-		fromEmailAddress:  fromEmailAddress,
-		fromEmailPassword: fromEmailPassword,
+		name:              config.Email.Username,
+		fromEmailAddress:  config.Email.From,
+		fromEmailPassword: config.Email.Password,
 	}
 }
 

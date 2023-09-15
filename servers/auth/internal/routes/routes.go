@@ -19,7 +19,7 @@ func Routes(e *echo.Echo, controller *controller.AppController) *echo.Echo {
 	})
 
 	api.POST("/signup", func(c echo.Context) error {
-		return controller.SignupController.Execute(c, controller.Store)
+		return controller.SignupController.Execute(c, controller.Store, controller.Mailer)
 	})
 
 	api.POST("/signout", func(c echo.Context) error {

@@ -29,12 +29,14 @@ func main() {
 
 	store := database.NewStore(connpool)
 
+	mailer := utils.NewGmailSender(config.Con)
+
 	e := echo.New()
 
 	e.Validator = &utils.CustomValidator{Validator: validator.New()}
 	e.Binder = &utils.CustomBinder{}
 
-	controller := &controller.AppController{Store: store}
+	controller := &controller.AppController{Store: store, Mailer: mailer}
 
 	e = routes.Routes(e, controller)
 

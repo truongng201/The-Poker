@@ -15,3 +15,8 @@ Redis:
   MaxConnAge: 600
   ReadTimeout: 300
   WriteTimeout: 300
+Email:
+  Username: "The Poker"
+  Password: "xvwapojesnlfzpog"
+  From: "truongng201@gmail.com"
+  FromName: "The Poker"

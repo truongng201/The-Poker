@@ -3,13 +3,16 @@ package controller
 import (
 	database "auth-service/pkg/database"
 	sqlc "auth-service/pkg/database/sqlc"
-	"auth-service/pkg/utils"
+	templates "auth-service/pkg/templates/email"
+	utils "auth-service/pkg/utils"
+
 	"fmt"
 	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
+	log "github.com/sirupsen/logrus"
 )
 
 type signupRequest struct {
@@ -98,7 +101,11 @@ func (controller *SignupController) generateVerifyEmailToken(
 	return verifyEmailToken, true, nil
 }
 
-func (controller *SignupController) Execute(c echo.Context, store database.Store) error {
+func (controller *SignupController) Execute(
+	c echo.Context,
+	store database.Store,
+	mailer utils.EmailSender,
+) error {
 	var req signupRequest
 	if err := c.Bind(&req); err != nil {
 		return err
@@ -126,9 +133,29 @@ func (controller *SignupController) Execute(c echo.Context, store database.Store
 		return err
 	}
 
-	_, ok, err = controller.generateVerifyEmailToken(c, userInfo)
+	verifyToken, ok, err := controller.generateVerifyEmailToken(c, userInfo)
 	if !ok {
 		return err
+	}
+
+	err = mailer.SendEmail(
+		"Verify your email",
+		templates.GenerateVerifyEmailTemplate(templates.VerifyEmailTemplateData{
+			Username:   req.Username,
+			VerifyLink: fmt.Sprintf("https://beta.truongng.me/verify?token=%s", verifyToken),
+		}),
+		[]string{userInfo.Email},
+		[]string{},
+		[]string{},
+		[]string{},
+	)
+	if err != nil {
+		log.Error(err)
+		return c.JSON(200, &utils.Response{
+			Success: false,
+			Message: "Sign up failed",
+			Payload: "",
+		})
 	}
 
 	return c.JSON(200, &utils.Response{

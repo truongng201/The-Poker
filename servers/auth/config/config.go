@@ -21,6 +21,8 @@ type ConfigType struct {
 	JWT JWTConfig
 	// Redis
 	Redis RedisConfig
+	// Email
+	Email EmailConfig
 }
 
 type JWTConfig struct {
@@ -39,6 +41,13 @@ type RedisConfig struct {
 	MaxConnAge   int
 	ReadTimeout  int
 	WriteTimeout int
+}
+
+type EmailConfig struct {
+	Username string
+	Password string
+	From     string
+	FromName string
 }
 
 var Con ConfigType
