@@ -1,30 +1,74 @@
 package controller
 
 import (
-	"auth-service/pkg/utils"
+	database "auth-service/pkg/database"
+	utils "auth-service/pkg/utils"
 
 	"github.com/labstack/echo/v4"
 )
 
-type verifyEmailRequest struct {
-	Email string `json:"email" validate:"required,email"`
+type verifyEmailRequestParam struct {
+	Token string `query:"token" validate:"required"`
 }
 
 type VerifyEmailController struct{}
 
-func (controller *VerifyEmailController) Validate(c echo.Context) (bool, error) {
-	var req verifyEmailRequest
-	if err := c.Bind(&req); err != nil {
-		return false, err
+func (controller *VerifyEmailController) checkToken(
+	c echo.Context,
+	req verifyEmailRequestParam,
+) (string, bool, error) {
+	email, err := utils.RedisClient.Get(c.Request().Context(), req.Token).Result()
+	if err != nil {
+		return "", false, c.JSON(200, &utils.Response{
+			Success: false,
+			Message: "Invalid token",
+			Payload: "",
+		})
 	}
-	if err := c.Validate(&req); err != nil {
-		return false, err
+	return email, true, nil
+}
+
+func (controller *VerifyEmailController) updateIsVerified(
+	c echo.Context,
+	store database.Store,
+	email string,
+	req verifyEmailRequestParam,
+) (bool, error) {
+	err := store.VerifyEmail(c.Request().Context(), email)
+	if err != nil {
+		return false, c.JSON(500, &utils.Response{
+			Success: false,
+			Message: "Internal server error",
+			Payload: "",
+		})
+	}
+	err = utils.RedisClient.Del(c.Request().Context(), req.Token).Err()
+	if err != nil {
+		return false, c.JSON(500, &utils.Response{
+			Success: false,
+			Message: "Internal server error",
+			Payload: "",
+		})
 	}
 	return true, nil
 }
 
-func (controller *VerifyEmailController) Execute(c echo.Context) error {
-	if ok, err := controller.Validate(c); !ok {
+func (controller *VerifyEmailController) Execute(c echo.Context, store database.Store) error {
+	var reqParam verifyEmailRequestParam
+	if err := c.Bind(&reqParam); err != nil {
+		return err
+	}
+	if err := c.Validate(&reqParam); err != nil {
+		return err
+	}
+
+	email, ok, err := controller.checkToken(c, reqParam)
+	if !ok {
+		return err
+	}
+
+	ok, err = controller.updateIsVerified(c, store, email, reqParam)
+	if !ok {
 		return err
 	}
 

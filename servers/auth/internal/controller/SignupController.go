@@ -84,8 +84,8 @@ func (controller *SignupController) generateVerifyEmailToken(
 	verifyEmailToken := uuid.New().String()
 	err := utils.RedisClient.Set(
 		c.Request().Context(),
-		userInfo.UserID,
 		verifyEmailToken,
+		userInfo.Email,
 		time.Duration(15)*time.Minute,
 	).Err()
 	if err != nil {

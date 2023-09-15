@@ -34,8 +34,8 @@ func Routes(e *echo.Echo, controller *controller.AppController) *echo.Echo {
 		return controller.ForgotPasswordController.Execute(c, controller.Store)
 	})
 
-	api.POST("/verify-email", func(c echo.Context) error {
-		return controller.VerifyEmailController.Execute(c)
+	api.GET("/verify-email", func(c echo.Context) error {
+		return controller.VerifyEmailController.Execute(c, controller.Store)
 	})
 
 	return e
