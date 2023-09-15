@@ -10,6 +10,7 @@ import (
 	utils "auth-service/pkg/utils"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
@@ -65,22 +66,9 @@ func (controller *SigninController) generateNewRefreshToken(
 	store database.Store,
 	userInfo sqlc.GetUserByEmailRow,
 ) (string, bool, error) {
-	newRefreshToken, err := utils.GenerateJWT(&jwt.MapClaims{
-		"sub": map[string]interface{}{
-			"user_id":  userInfo.UserID,
-			"username": userInfo.Username,
-			"email":    userInfo.Email,
-		},
-		"iat": time.Now().Local(),
-		"exp": time.Duration(config.Con.JWT.RefreshTokenExpirationTime) * time.Minute,
-	}, config.Con.JWT.SecretKey)
+	newRefreshToken := uuid.New().String()
 
-	if err != nil {
-		log.Error(err)
-		return "", false, utils.ErrInternalServerRepsonse()
-	}
-
-	_, err = store.CreateRefreshToken(
+	_, err := store.CreateRefreshToken(
 		c.Request().Context(),
 		sqlc.CreateRefreshTokenParams{
 			UserID: userInfo.ID,
@@ -100,6 +88,18 @@ func (controller *SigninController) generateNewRefreshToken(
 		return "", false, utils.ErrInternalServerRepsonse()
 	}
 
+	err = utils.RedisClient.Set(
+		c.Request().Context(),
+		newRefreshToken,
+		userInfo.Email,
+		time.Duration(config.Con.JWT.AccessTokenExpirationTime)*time.Minute,
+	).Err()
+
+	if err != nil {
+		log.Error(err)
+		return "", false, utils.ErrInternalServerResponse()
+	}
+
 	return newRefreshToken, true, nil
 }
 
@@ -109,6 +109,11 @@ func (controller *SigninController) generateNewAccessToken(
 	userInfo sqlc.GetUserByEmailRow,
 ) (string, bool, error) {
 	newAccessToken, err := utils.GenerateJWT(&jwt.MapClaims{
+		"sub": map[string]interface{}{
+			"user_id":  userInfo.UserID,
+			"username": userInfo.Username,
+			"email":    userInfo.Email,
+		},
 		"iat": time.Now().Local(),
 		"exp": time.Duration(config.Con.JWT.AccessTokenExpirationTime) * time.Minute,
 	}, config.Con.JWT.SecretKey)
@@ -116,17 +121,6 @@ func (controller *SigninController) generateNewAccessToken(
 		return "", false, utils.ErrInternalServerRepsonse()
 	}
 
-	err = utils.RedisClient.Set(
-		c.Request().Context(),
-		newAccessToken,
-		userInfo.UserID,
-		time.Duration(config.Con.JWT.AccessTokenExpirationTime)*time.Minute,
-	).Err()
-
-	if err != nil {
-		log.Error(err)
-		return "", false, utils.ErrInternalServerRepsonse()
-	}
 	return newAccessToken, true, nil
 }
 
