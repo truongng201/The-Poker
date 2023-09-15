@@ -1,8 +1,4 @@
-DatabaseURI: postgres://admin:admin@database:5432/beta-db?sslmode=disable
 Environment: development
-Domains:
-  Client: https://beta.truongng.me
-  Server: https://beta-api-v1.truongng.me
 AllowedOrigins: ["*"]
 JWT:
   Secretkey: "secret"
@@ -23,3 +19,18 @@ Email:
   Password: "xvwapojesnlfzpog"
   From: "truongng201@gmail.com"
   FromName: "The Poker"
+Timeout:
+  ResetPaswordToken: 15 # in minutes
+  VerifyEmailToken: 15 # in minutes
+Domains:
+  Client: https://beta.truongng.me
+  Server: https://beta-api-v1.truongng.me
+DatabaseURI: 
+  DatabaseType: postgres
+  Host: database
+  Port: 5432
+  Username: admin
+  Password: admin
+  DatabaseName: beta-db
+  SSLMode: disable
+  DatabaseURI: postgres://admin:admin@database:5432/beta-db?sslmode=disable

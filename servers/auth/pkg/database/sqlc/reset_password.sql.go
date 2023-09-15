@@ -12,15 +12,15 @@ import (
 const resetPassword = `-- name: ResetPassword :exec
 UPDATE users SET
     hashed_password = $2
-WHERE email = $1
+WHERE user_id = $1
 `
 
 type ResetPasswordParams struct {
-	Email          string `json:"email"`
+	UserID         string `json:"user_id"`
 	HashedPassword string `json:"hashed_password"`
 }
 
 func (q *Queries) ResetPassword(ctx context.Context, arg ResetPasswordParams) error {
-	_, err := q.db.Exec(ctx, resetPassword, arg.Email, arg.HashedPassword)
+	_, err := q.db.Exec(ctx, resetPassword, arg.UserID, arg.HashedPassword)
 	return err
 }

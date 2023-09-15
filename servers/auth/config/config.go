@@ -11,25 +11,35 @@ import (
 )
 
 type ConfigType struct {
-	// Database
-	DatabaseURI string
-	// Server environment
-	Environment string
-	// Client Url
-	Domains struct {
-		Client string
-		Server string
-	}
-	// Allowed origins
+	Environment    string
 	AllowedOrigins []string
-	// JWT
-	JWT JWTConfig
-	// Redis
-	Redis RedisConfig
-	// Email
-	Email EmailConfig
+	JWT            JWTConfig
+	Redis          RedisConfig
+	Email          EmailConfig
+	Timeout        TimeoutConfig
+	Domains        DomainsConfig
+	Database       DatabaseConfig
 }
 
+type DatabaseConfig struct {
+	DatbaseType string
+	Host        string
+	Port        int
+	User        string
+	Password    string
+	DatabaseURI string
+	SSLMode     string
+}
+
+type TimeoutConfig struct {
+	ResetPasswordToken int
+	VerifyEmailToken   int
+}
+
+type DomainsConfig struct {
+	Client string
+	Server string
+}
 type JWTConfig struct {
 	SecretKey                  string
 	AccessTokenExpirationTime  int

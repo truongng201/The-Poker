@@ -27,7 +27,7 @@ func Routes(e *echo.Echo, controller *controller.AppController) *echo.Echo {
 	})
 
 	api.POST("/reset-password", func(c echo.Context) error {
-		return controller.ResetPasswordController.Execute(c)
+		return controller.ResetPasswordController.Execute(c, controller.Store)
 	})
 
 	api.POST("/forgot-password", func(c echo.Context) error {

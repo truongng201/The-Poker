@@ -1,6 +1,7 @@
 package controller
 
 import (
+	config "auth-service/config"
 	database "auth-service/pkg/database"
 	sqlc "auth-service/pkg/database/sqlc"
 	templates "auth-service/pkg/templates/email"
@@ -14,7 +15,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type forgotPasswordRequest struct {
+type forgotPasswordRequestBody struct {
 	Email string `json:"email" validate:"required,email"`
 }
 
@@ -23,30 +24,20 @@ type ForgotPasswordController struct{}
 func (controller *ForgotPasswordController) checkEmailExists(
 	c echo.Context,
 	store database.Store,
-	req forgotPasswordRequest,
+	req forgotPasswordRequestBody,
 ) (sqlc.FindUserByEmailRow, bool, error) {
 	userInfo, err := store.FindUserByEmail(c.Request().Context(), req.Email)
+
 	if err != nil {
 		if err.Error() == "no rows in result set" {
-			return userInfo, false, c.JSON(200, &utils.Response{
-				Success: false,
-				Message: "Email not found",
-				Payload: "",
-			})
+			return userInfo, false, utils.ErrNoSuchUserResponse()
 		}
-		return userInfo, false, c.JSON(500, &utils.Response{
-			Success: false,
-			Message: "Internal server error",
-			Payload: "",
-		})
+		log.Error(err)
+		return userInfo, false, utils.ErrInternalServerRepsonse()
 	}
 
 	if !userInfo.IsVerified {
-		return userInfo, false, c.JSON(200, &utils.Response{
-			Success: false,
-			Message: "Email not verified",
-			Payload: "",
-		})
+		return userInfo, false, c.Redirect(302, fmt.Sprintf("%s/reverify", config.Con.Domains.Client))
 	}
 
 	return userInfo, true, nil
@@ -55,36 +46,17 @@ func (controller *ForgotPasswordController) checkEmailExists(
 func (controller *ForgotPasswordController) sendResetPasswordEmail(
 	c echo.Context,
 	store database.Store,
-	req forgotPasswordRequest,
+	req forgotPasswordRequestBody,
 	mailer utils.EmailSender,
 	userInfo sqlc.FindUserByEmailRow,
+	resetPasswordtoken string,
 ) (bool, error) {
-	// Generate token
-	token := uuid.New().String()
-
-	// Save token to cache
-	err := utils.RedisClient.Set(
-		c.Request().Context(),
-		token,
-		userInfo.UserID,
-		time.Duration(15)*time.Minute,
-	).Err()
-	if err != nil {
-		log.Error(err)
-		return false, c.JSON(500, &utils.Response{
-			Success: false,
-			Message: "Internal server error",
-			Payload: "",
-		})
-	}
-
-	// Send email
-	err = mailer.SendEmail(
+	err := mailer.SendEmail(
 		"Reset password",
 		templates.GenerateResetPasswordTemplate(
 			templates.ResetPasswordTemplateData{
 				Username:  userInfo.Username,
-				ResetLink: fmt.Sprintf("https://beta.truongng.me/reset/%s", token),
+				ResetLink: fmt.Sprintf("%s/reset/%s", config.Con.Domains.Client, resetPasswordtoken),
 			},
 		),
 		[]string{userInfo.Email},
@@ -92,16 +64,33 @@ func (controller *ForgotPasswordController) sendResetPasswordEmail(
 		[]string{},
 		[]string{},
 	)
+
 	if err != nil {
 		log.Error(err)
-		return false, c.JSON(500, &utils.Response{
-			Success: false,
-			Message: "Internal server error",
-			Payload: "",
-		})
+		return false, utils.ErrBadRequestResponse()
 	}
 
 	return true, nil
+}
+
+func (controller *ForgotPasswordController) generateResetPasswordToken(
+	c echo.Context,
+	userInfo sqlc.FindUserByEmailRow,
+) (string, bool, error) {
+	resetPasswordToken := uuid.New().String()
+
+	err := utils.RedisClient.Set(
+		c.Request().Context(),
+		resetPasswordToken,
+		userInfo.UserID,
+		time.Duration(config.Con.Timeout.ResetPasswordToken)*time.Minute,
+	).Err()
+	if err != nil {
+		log.Error(err)
+		return "", false, utils.ErrInternalServerResponse()
+	}
+
+	return resetPasswordToken, true, nil
 }
 
 func (controller *ForgotPasswordController) Execute(
@@ -109,8 +98,9 @@ func (controller *ForgotPasswordController) Execute(
 	store database.Store,
 	mailer utils.EmailSender,
 ) error {
-	var req forgotPasswordRequest
+	var req forgotPasswordRequestBody
 	if err := c.Bind(&req); err != nil {
+		log.Error(err)
 		return err
 	}
 	if err := c.Validate(&req); err != nil {
@@ -122,14 +112,22 @@ func (controller *ForgotPasswordController) Execute(
 		return err
 	}
 
-	ok, err = controller.sendResetPasswordEmail(c, store, req, mailer, userInfo)
+	resetPasswordToken, ok, err := controller.generateResetPasswordToken(c, userInfo)
 	if !ok {
 		return err
 	}
 
-	return c.JSON(200, &utils.Response{
-		Success: true,
-		Message: "Send reset password email success",
-		Payload: "",
-	})
+	ok, err = controller.sendResetPasswordEmail(
+		c,
+		store,
+		req,
+		mailer,
+		userInfo,
+		resetPasswordToken,
+	)
+	if !ok {
+		return err
+	}
+
+	return utils.SuccessResponse("Reset password email has been sent", nil)
 }

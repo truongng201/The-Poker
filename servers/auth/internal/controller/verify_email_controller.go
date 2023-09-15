@@ -1,11 +1,11 @@
 package controller
 
 import (
+	"fmt"
+
 	config "auth-service/config"
 	database "auth-service/pkg/database"
 	utils "auth-service/pkg/utils"
-
-	"fmt"
 
 	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
@@ -17,7 +17,7 @@ type verifyEmailRequestParam struct {
 
 type VerifyEmailController struct{}
 
-func (controller *VerifyEmailController) checkToken(
+func (controller *VerifyEmailController) checkVerifyToken(
 	c echo.Context,
 	req verifyEmailRequestParam,
 ) (string, bool, error) {
@@ -59,7 +59,7 @@ func (controller *VerifyEmailController) Execute(c echo.Context, store database.
 		return utils.ErrBadRequestResponse()
 	}
 
-	email, ok, err := controller.checkToken(c, reqParam)
+	email, ok, err := controller.checkVerifyToken(c, reqParam)
 	if !ok {
 		return err
 	}

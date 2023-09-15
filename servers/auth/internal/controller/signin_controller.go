@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"time"
 
 	config "auth-service/config"
@@ -14,7 +15,7 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-type signinRequest struct {
+type signinRequestBody struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=8,max=32,alphanum"`
 }
@@ -29,7 +30,7 @@ type SigninController struct{}
 func (controller *SigninController) checkEmailExists(
 	c echo.Context,
 	store database.Store,
-	req signinRequest,
+	req signinRequestBody,
 ) (sqlc.GetUserByEmailRow, bool, error) {
 	res, err := store.GetUserByEmail(c.Request().Context(), req.Email)
 	if err != nil {
@@ -41,7 +42,7 @@ func (controller *SigninController) checkEmailExists(
 	}
 
 	if !res.IsVerified {
-		return res, false, utils.ErrUnverifiedEmailResponse()
+		return res, false, c.Redirect(302, fmt.Sprintf("%s/reverify", config.Con.Domains.Client))
 	}
 
 	return res, true, nil
@@ -49,8 +50,7 @@ func (controller *SigninController) checkEmailExists(
 
 func (controller *SigninController) checkPassword(
 	c echo.Context,
-	store database.Store,
-	req signinRequest,
+	req signinRequestBody,
 	res sqlc.GetUserByEmailRow,
 ) (bool, error) {
 	if !utils.CheckPassword(req.Password, res.HashedPassword) {
@@ -64,8 +64,8 @@ func (controller *SigninController) generateNewRefreshToken(
 	c echo.Context,
 	store database.Store,
 	userInfo sqlc.GetUserByEmailRow,
-) (sqlc.CreateRefreshTokenRow, bool, error) {
-	new_refresh_token, err := utils.GenerateJWT(&jwt.MapClaims{
+) (string, bool, error) {
+	newRefreshToken, err := utils.GenerateJWT(&jwt.MapClaims{
 		"sub": map[string]interface{}{
 			"user_id":  userInfo.UserID,
 			"username": userInfo.Username,
@@ -76,10 +76,11 @@ func (controller *SigninController) generateNewRefreshToken(
 	}, config.Con.JWT.SecretKey)
 
 	if err != nil {
-		return sqlc.CreateRefreshTokenRow{}, false, utils.ErrInternalServerRepsonse()
+		log.Error(err)
+		return "", false, utils.ErrInternalServerRepsonse()
 	}
 
-	res, err := store.CreateRefreshToken(
+	_, err = store.CreateRefreshToken(
 		c.Request().Context(),
 		sqlc.CreateRefreshTokenParams{
 			UserID: userInfo.ID,
@@ -90,15 +91,16 @@ func (controller *SigninController) generateNewRefreshToken(
 				String: c.Request().UserAgent(),
 			},
 			IpAddress: c.Request().RemoteAddr,
-			Token:     new_refresh_token,
+			Token:     newRefreshToken,
 		},
 	)
 
 	if err != nil {
-		return res, false, utils.ErrInternalServerRepsonse()
+		log.Error(err)
+		return "", false, utils.ErrInternalServerRepsonse()
 	}
 
-	return res, true, nil
+	return newRefreshToken, true, nil
 }
 
 func (controller *SigninController) generateNewAccessToken(
@@ -129,12 +131,13 @@ func (controller *SigninController) generateNewAccessToken(
 }
 
 func (controller *SigninController) Execute(c echo.Context, store database.Store) error {
-	var req signinRequest
+	var req signinRequestBody
 
 	if err := c.Bind(&req); err != nil {
 		log.Error(err)
 		return utils.ErrBadRequestResponse()
 	}
+
 	if err := c.Validate(&req); err != nil {
 		log.Error(err)
 		return utils.ErrBadRequestResponse()
@@ -145,12 +148,12 @@ func (controller *SigninController) Execute(c echo.Context, store database.Store
 		return err
 	}
 
-	ok, err = controller.checkPassword(c, store, req, userInfo)
+	ok, err = controller.checkPassword(c, req, userInfo)
 	if !ok {
 		return err
 	}
 
-	refreshTokenInfo, ok, err := controller.generateNewRefreshToken(c, store, userInfo)
+	refreshToken, ok, err := controller.generateNewRefreshToken(c, store, userInfo)
 	if !ok {
 		return err
 	}
@@ -160,12 +163,11 @@ func (controller *SigninController) Execute(c echo.Context, store database.Store
 		return err
 	}
 
-	return c.JSON(200, &utils.Response{
-		Success: true,
-		Message: "Sign in success",
-		Payload: &signinResponsePayload{
+	return utils.SuccessResponse(
+		"Sign in successfully",
+		&signinResponsePayload{
+			RefreshToken: refreshToken,
 			AccessToken:  accessToken,
-			RefreshToken: refreshTokenInfo.Token,
 		},
-	})
+	)
 }

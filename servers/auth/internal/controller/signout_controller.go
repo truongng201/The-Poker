@@ -2,10 +2,11 @@ package controller
 
 import (
 	"auth-service/pkg/utils"
+
 	"github.com/labstack/echo/v4"
 )
 
-type signoutRequest struct {
+type signoutRequestBody struct {
 	Email        string `json:"email" validate:"required,email"`
 	RefreshToken string `json:"refresh_token" validate:"required"`
 	AccessToken  string `json:"access_token" validate:"required"`
@@ -14,7 +15,7 @@ type signoutRequest struct {
 type SignoutController struct{}
 
 func (controller *SignoutController) Validate(c echo.Context) (bool, error) {
-	var req signoutRequest
+	var req signoutRequestBody
 	if err := c.Bind(&req); err != nil {
 		return false, err
 	}
