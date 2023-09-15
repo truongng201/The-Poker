@@ -112,11 +112,3 @@ func ErrUnverifiedEmailResponse() error {
 		Payload: "",
 	})
 }
-
-func SuccessResponse(message string, payload interface{}) error {
-	return echo.NewHTTPError(http.StatusOK, Response{
-		Success: true,
-		Message: message,
-		Payload: payload,
-	})
-}

@@ -129,5 +129,9 @@ func (controller *ForgotPasswordController) Execute(
 		return err
 	}
 
-	return utils.SuccessResponse("Reset password email has been sent", nil)
+	return c.JSON(200, utils.Response{
+		Success: true,
+		Message: "Reset password email sent",
+		Payload: "",
+	})
 }

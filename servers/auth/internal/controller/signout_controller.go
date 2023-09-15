@@ -24,7 +24,8 @@ func (controller *SignoutController) revokeAccessToken(
 		log.Error(err)
 		return false, utils.ErrInternalServerResponse()
 	}
-	log.Info(claims)
+	log.Info(claims["sub"].(map[string]interface{})["user_id"])
+	log.Info(claims.GetSubject())
 	return true, nil
 }
 

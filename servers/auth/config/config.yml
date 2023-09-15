@@ -3,7 +3,7 @@ AllowedOrigins: ["*"]
 JWT:
   Secretkey: "secret"
   RefreshTokenExpirationTime: 43200 # in minutes (30 days)
-  AccessTokenExpirationTime: 60 # in minutes
+  AccessTokenExpirationTime: 1 # in minutes
 Redis:
   Address: "cache:6379"
   Password: "admin"

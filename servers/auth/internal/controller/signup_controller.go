@@ -160,10 +160,11 @@ func (controller *SignupController) Execute(
 		return err
 	}
 
-	return utils.SuccessResponse(
-		"Sign up success",
-		&signupResponsePayload{
+	return c.JSON(200, utils.Response{
+		Success: true,
+		Message: "Sign up successfully",
+		Payload: signupResponsePayload{
 			UserID: userInfo.UserID,
 		},
-	)
+	})
 }

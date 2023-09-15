@@ -109,13 +109,13 @@ func (controller *SigninController) generateNewAccessToken(
 	userInfo sqlc.GetUserByEmailRow,
 ) (string, bool, error) {
 	newAccessToken, err := utils.GenerateJWT(&jwt.MapClaims{
-		"sub": map[string]interface{}{
-			"user_id":  userInfo.UserID,
-			"username": userInfo.Username,
-			"email":    userInfo.Email,
+		"sub": utils.JWTClaimsAccessTokenSub{
+			UserID:   userInfo.UserID,
+			Username: userInfo.Username,
+			Email:    userInfo.Email,
 		},
-		"iat": time.Now().Local(),
-		"exp": time.Now().Local().Add(time.Duration(config.Con.JWT.AccessTokenExpirationTime) * time.Minute),
+		"iat": time.Now().Local().Unix(),
+		"exp": time.Now().Local().Add(time.Duration(config.Con.JWT.AccessTokenExpirationTime) * time.Minute).Unix(),
 	}, config.Con.JWT.SecretKey)
 	if err != nil {
 		return "", false, utils.ErrInternalServerRepsonse()
@@ -157,11 +157,12 @@ func (controller *SigninController) Execute(c echo.Context, store database.Store
 		return err
 	}
 
-	return utils.SuccessResponse(
-		"Sign in successfully",
-		&signinResponsePayload{
+	return c.JSON(200, utils.Response{
+		Success: true,
+		Message: "Sign in successfully",
+		Payload: signinResponsePayload{
 			RefreshToken: refreshToken,
 			AccessToken:  accessToken,
 		},
-	)
+	})
 }

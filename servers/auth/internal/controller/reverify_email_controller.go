@@ -116,8 +116,9 @@ func (controller *ReverifyEmailController) Execute(
 		return err
 	}
 
-	return utils.SuccessResponse(
-		"Resend email verification success",
-		nil,
-	)
+	return c.JSON(200, utils.Response{
+		Success: true,
+		Message: "Verification email resent",
+		Payload: "",
+	})
 }
