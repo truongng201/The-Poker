@@ -12,19 +12,12 @@ type resetPasswordRequest struct {
 
 type ResetPasswordController struct{}
 
-func (controller *ResetPasswordController) Validate(c echo.Context) (bool, error) {
+func (controller *ResetPasswordController) Execute(c echo.Context) error {
 	var req resetPasswordRequest
 	if err := c.Bind(&req); err != nil {
-		return false, err
+		return err
 	}
 	if err := c.Validate(req); err != nil {
-		return false, err
-	}
-	return true, nil
-}
-
-func (controller *ResetPasswordController) Execute(c echo.Context) error {
-	if ok, err := controller.Validate(c); !ok {
 		return err
 	}
 

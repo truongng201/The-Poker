@@ -13,7 +13,8 @@ const findUserByEmail = `-- name: FindUserByEmail :one
 SELECT
     user_id,
     email,
-    is_verified
+    is_verified,
+    username
 FROM users
 WHERE email = $1
 `
@@ -22,11 +23,17 @@ type FindUserByEmailRow struct {
 	UserID     string `json:"user_id"`
 	Email      string `json:"email"`
 	IsVerified bool   `json:"is_verified"`
+	Username   string `json:"username"`
 }
 
 func (q *Queries) FindUserByEmail(ctx context.Context, email string) (FindUserByEmailRow, error) {
 	row := q.db.QueryRow(ctx, findUserByEmail, email)
 	var i FindUserByEmailRow
-	err := row.Scan(&i.UserID, &i.Email, &i.IsVerified)
+	err := row.Scan(
+		&i.UserID,
+		&i.Email,
+		&i.IsVerified,
+		&i.Username,
+	)
 	return i, err
 }

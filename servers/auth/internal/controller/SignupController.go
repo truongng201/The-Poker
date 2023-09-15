@@ -101,6 +101,35 @@ func (controller *SignupController) generateVerifyEmailToken(
 	return verifyEmailToken, true, nil
 }
 
+func (controller *SignupController) sendVerifyEmail(
+	c echo.Context,
+	mailer utils.EmailSender,
+	req signupRequest,
+	userInfo sqlc.CreateUserRow,
+	verifyToken string,
+) (bool, error){
+	err := mailer.SendEmail(
+		"Verify your email",
+		templates.GenerateVerifyEmailTemplate(templates.VerifyEmailTemplateData{
+			Username:   req.Username,
+			VerifyLink: fmt.Sprintf("https://beta.truongng.me/verify/%s", verifyToken),
+		}),
+		[]string{userInfo.Email},
+		[]string{},
+		[]string{},
+		[]string{},
+	)
+	if err != nil {
+		log.Error(err)
+		return false, c.JSON(200, &utils.Response{
+			Success: false,
+			Message: "Sign up failed",
+			Payload: "",
+		})
+	}
+	return true, nil
+}
+
 func (controller *SignupController) Execute(
 	c echo.Context,
 	store database.Store,
@@ -138,25 +167,11 @@ func (controller *SignupController) Execute(
 		return err
 	}
 
-	err = mailer.SendEmail(
-		"Verify your email",
-		templates.GenerateVerifyEmailTemplate(templates.VerifyEmailTemplateData{
-			Username:   req.Username,
-			VerifyLink: fmt.Sprintf("https://beta.truongng.me/verify?token=%s", verifyToken),
-		}),
-		[]string{userInfo.Email},
-		[]string{},
-		[]string{},
-		[]string{},
-	)
-	if err != nil {
-		log.Error(err)
-		return c.JSON(200, &utils.Response{
-			Success: false,
-			Message: "Sign up failed",
-			Payload: "",
-		})
+	ok, err = controller.sendVerifyEmail(c, mailer, req, userInfo, verifyToken)
+	if !ok {
+		return err
 	}
+
 
 	return c.JSON(200, &utils.Response{
 		Success: true,

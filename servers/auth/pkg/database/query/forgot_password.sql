@@ -2,6 +2,7 @@
 SELECT
     user_id,
     email,
-    is_verified
+    is_verified,
+    username
 FROM users
 WHERE email = $1;
