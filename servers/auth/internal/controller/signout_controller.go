@@ -4,6 +4,7 @@ import (
 	config "auth-service/config"
 	utils "auth-service/pkg/utils"
 
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	log "github.com/sirupsen/logrus"
 )
@@ -21,6 +22,9 @@ func (controller *SignoutController) revokeAccessToken(
 ) (bool, error) {
 	claims, err := utils.GetJWTClaims(req.AccessToken, config.Con.JWT.SecretKey)
 	if err != nil {
+		if err == jwt.ErrTokenExpired {
+			log.Error("aaaa")
+		}
 		log.Error(err)
 		return false, utils.ErrInternalServerResponse()
 	}

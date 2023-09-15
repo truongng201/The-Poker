@@ -26,6 +26,9 @@ func ParseJWT(tokenString, secret string) (jwt.Claims, error) {
 	})
 
 	if err != nil {
+		if err == jwt.ErrTokenExpired {
+			return nil, jwt.ErrTokenExpired
+		}
 		return nil, fmt.Errorf("error parsing JWT: %v", err)
 	}
 
@@ -37,6 +40,9 @@ func GetJWTClaims(tokenString, secret string) (jwt.MapClaims, error) {
 	claims, err := ParseJWT(tokenString, secret)
 
 	if err != nil {
+		if err == jwt.ErrTokenExpired {
+			return nil, jwt.ErrTokenExpired
+		}
 		return nil, fmt.Errorf("error getting JWT claims: %v", err)
 	}
 
