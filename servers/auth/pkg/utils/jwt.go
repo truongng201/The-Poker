@@ -1,9 +1,8 @@
 package utils
 
 import (
-	"fmt"
-
 	"github.com/golang-jwt/jwt/v5"
+	log "github.com/sirupsen/logrus"
 )
 
 type JWTClaimsAccessTokenSub struct {
@@ -29,7 +28,8 @@ func ParseJWT(tokenString, secret string) (jwt.Claims, error) {
 		if err == jwt.ErrTokenExpired {
 			return nil, jwt.ErrTokenExpired
 		}
-		return nil, fmt.Errorf("error parsing JWT: %v", err)
+		log.Error(err)
+		return nil, err
 	}
 
 	return token.Claims, nil
@@ -43,7 +43,7 @@ func GetJWTClaims(tokenString, secret string) (jwt.MapClaims, error) {
 		if err == jwt.ErrTokenExpired {
 			return nil, jwt.ErrTokenExpired
 		}
-		return nil, fmt.Errorf("error getting JWT claims: %v", err)
+		return nil, err
 	}
 
 	return claims.(jwt.MapClaims), nil

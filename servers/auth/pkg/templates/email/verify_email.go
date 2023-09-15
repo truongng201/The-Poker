@@ -10,6 +10,7 @@ var VerifyEmailTemplate string
 type VerifyEmailTemplateData struct {
 	Username   string
 	VerifyLink string
+	ExpireTime int
 }
 
 func GenerateVerifyEmailTemplate(data VerifyEmailTemplateData) string {
@@ -81,7 +82,7 @@ width: 100% !important
                       
                         
                           
-                            <p style="margin-top:0;color:#74787E;font-size:16px;line-height:1.5em">To get started with the poker, please click here to verify your email. This link will expire in 15 minutes.</p>
+                            <p style="margin-top:0;color:#74787E;font-size:16px;line-height:1.5em">To get started with the poker, please click here to verify your email. This link will expire in {{.ExpireTime}} minutes.</p>
                             
                             
                             

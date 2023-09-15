@@ -20,11 +20,11 @@ Email:
   From: "truongng201@gmail.com"
   FromName: "The Poker"
 Timeout:
-  ResetPaswordToken: 15 # in minutes
+  ResetPasswordToken: 15 # in minutes
   VerifyEmailToken: 15 # in minutes
 Domains:
-  Client: https://beta.truongng.me
-  Server: https://beta-api-v1.truongng.me
+  Client: http://localhost:3000
+  Server: http://localhost:8080
 Database:
   DatabaseType: postgres
   Host: database

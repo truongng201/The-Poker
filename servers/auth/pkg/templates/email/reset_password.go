@@ -8,8 +8,9 @@ import (
 var ResetPasswordTemplate string
 
 type ResetPasswordTemplateData struct {
-	Username  string
-	ResetLink string
+	Username   string
+	ResetLink  string
+	ExpireTime int
 }
 
 func GenerateResetPasswordTemplate(data ResetPasswordTemplateData) string {
@@ -81,7 +82,7 @@ width: 100% !important
                       
                         
                           
-                            <p style="margin-top:0;color:#74787E;font-size:16px;line-height:1.5em">To reset your password, please click here. This link will expire in 15 minutes.</p>
+                            <p style="margin-top:0;color:#74787E;font-size:16px;line-height:1.5em">To reset your password, please click here. This link will expire in {{.ExpireTime}} minutes.</p>
                             
                             
                             

@@ -55,11 +55,12 @@ func (controller *ForgotPasswordController) sendResetPasswordEmail(
 		"Reset password",
 		templates.GenerateResetPasswordTemplate(
 			templates.ResetPasswordTemplateData{
-				Username:  userInfo.Username,
-				ResetLink: fmt.Sprintf("%s/reset/%s", config.Con.Domains.Client, resetPasswordtoken),
+				Username:   userInfo.Username,
+				ResetLink:  fmt.Sprintf("%s/reset/%s", config.Con.Domains.Client, resetPasswordtoken),
+				ExpireTime: config.Con.Timeout.ResetPasswordToken,
 			},
 		),
-		[]string{userInfo.Email},
+		[]string{req.Email},
 		[]string{},
 		[]string{},
 		[]string{},

@@ -104,7 +104,8 @@ func (controller *SignupController) sendVerifyEmail(
 		"Verify your email",
 		templates.GenerateVerifyEmailTemplate(templates.VerifyEmailTemplateData{
 			Username:   req.Username,
-			VerifyLink: fmt.Sprintf("%s/verify-email?token=%s", config.Con.Domains.Server, verifyToken),
+			VerifyLink: fmt.Sprintf("%s/auth/verify-email?token=%s", config.Con.Domains.Server, verifyToken),
+			ExpireTime: config.Con.Timeout.VerifyEmailToken,
 		}),
 		[]string{userInfo.Email},
 		[]string{},

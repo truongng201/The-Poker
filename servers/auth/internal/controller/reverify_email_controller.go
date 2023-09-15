@@ -71,7 +71,8 @@ func (controller *ReverifyEmailController) sendVerificationEmail(
 		"Verify your email",
 		templates.GenerateVerifyEmailTemplate(templates.VerifyEmailTemplateData{
 			Username:   userInfo.Username,
-			VerifyLink: fmt.Sprintf("%s/verify-email?token=%s", config.Con.Domains.Server, verifyEmailToken),
+			VerifyLink: fmt.Sprintf("%s/auth/verify-email?token=%s", config.Con.Domains.Server, verifyEmailToken),
+			ExpireTime: config.Con.Timeout.VerifyEmailToken,
 		}),
 		[]string{userInfo.Email},
 		[]string{},
