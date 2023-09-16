@@ -36,6 +36,10 @@ func (controller *ReverifyEmailController) checkEmailExists(
 		return userInfo, false, utils.ErrInternalServerRepsonse()
 	}
 
+	if userInfo.IsVerified {
+		return userInfo, false, utils.ErrBadRequestResponse()
+	}
+
 	return userInfo, true, nil
 }
 

@@ -69,5 +69,5 @@ func (controller *VerifyEmailController) Execute(c echo.Context, store database.
 		return err
 	}
 
-	return c.Redirect(302, fmt.Sprintf("%s/signin", config.Con.Domains.Client))
+	return c.Redirect(302, fmt.Sprintf("%s/confirm-verify", config.Con.Domains.Client))
 }

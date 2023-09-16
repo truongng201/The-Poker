@@ -149,7 +149,7 @@ width: 100% !important
                                 <tr>
                                   <td style="padding:10px 5px;color:#74787E;font-size:15px;line-height:18px">
                                     <p class="sub" style="margin-top:0;color:#74787E;line-height:1.5em;font-size:12px">If the verify button is not working for you, just copy and paste the URL below into your web browser.</p>
-                                    <p class="sub" style="margin-top:0;color:#74787E;line-height:1.5em;font-size:12px"><a href="https://beta.truongng.me/verify?token=d9729feb74992cc3482b350163a1a010" style="color:#3869D4;word-break:break-all">{{.VerifyLink}}</a></p>
+                                    <p class="sub" style="margin-top:0;color:#74787E;line-height:1.5em;font-size:12px"><a href="{{.VerifyLink}}" style="color:#3869D4;word-break:break-all">{{.VerifyLink}}</a></p>
                                   </td>
                                 </tr>
                                 
