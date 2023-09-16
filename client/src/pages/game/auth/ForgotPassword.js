@@ -1,9 +1,40 @@
-import React from "react";
-import BackIcon from "../../../assets/icons/back.png";
-import { Link } from "react-router-dom";
 import "./ForgotPassword.css";
+import React, { useState } from "react";
+import BackIcon from "../../../assets/icons/back.png";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { EmailValidation } from "../../../utils/validation";
+import AlertComponent from "../../../components/Alerts";
+import LoadingComponent from "../../../components/Loading";
 
 export default function ForgotPassword() {
+  const [email, setEmail] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
+
+  const forgot = (e) => {
+    e.preventDefault();
+    if (!EmailValidation(email)) {
+      setErrorMessage("Invalid email address");
+    } else {
+      setErrorMessage("");
+      setIsLoading(true);
+      axios
+        .post(`${process.env.REACT_APP_SERVER_URL}/auth/forgot-password`, {
+          email: email,
+        })
+        .then(() => {
+          setIsLoading(false);
+          navigate("/reset-email");
+        })
+        .catch((err) => {
+          setErrorMessage(err.response?.data?.message);
+          setIsLoading(false);
+        });
+    }
+  };
+
   return (
     <div className="shared-container ForgotPassword">
       <div className="back">
@@ -18,13 +49,25 @@ export default function ForgotPassword() {
             type="text"
             className="shared-form-control form-control-forgotpassword"
             id="email"
-            placeholder="Email"
+            placeholder="thepoker@gmail.com"
+            onChange={(e) => {
+              setEmail(e.target.value);
+            }}
           />
-          <div className="shared-button forgotpassword-button">
-            <span>Send</span>
-          </div>
+          <button
+            className="shared-button forgotpassword-button"
+            disabled={isLoading}
+            onClick={forgot}>
+            {isLoading ? <LoadingComponent size="sm" /> : <span>Send</span>}
+          </button>
         </div>
       </form>
+      {errorMessage !== "" && (
+        <AlertComponent
+          message={errorMessage}
+          handleClose={() => setErrorMessage("")}
+        />
+      )}
     </div>
   );
 }
