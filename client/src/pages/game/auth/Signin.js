@@ -1,9 +1,12 @@
-import { Link, useNavigate } from "react-router-dom";
 import "./Signin.css";
+
 import React, { useState } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+
 import BackIcon from "../../../assets/icons/back.png";
 import AlertComponent from "../../../components/Alerts";
-import axios from "axios";
+import { EmailValidation, PasswordValidation } from "../../../utils/validation";
 import LoadingComponent from "../../../components/Loading";
 
 export default function Signin() {
@@ -12,16 +15,6 @@ export default function Signin() {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-
-  const EmailValidation = (email) => {
-    const re = /\S+@\S+\.\S+/;
-    return re.test(email);
-  };
-
-  const PasswordValidation = (password) => {
-    const re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,32}$/;
-    return re.test(password);
-  };
 
   const signin = (e) => {
     e.preventDefault();
@@ -84,6 +77,7 @@ export default function Signin() {
           <button
             className="signin-button"
             onClick={signin}
+            onEnter={signin}
             disabled={isLoading}>
             {isLoading ? (
               <LoadingComponent size={"sm"} />

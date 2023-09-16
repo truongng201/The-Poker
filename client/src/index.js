@@ -14,6 +14,9 @@ import ForgotPassword from "./pages/game/auth/ForgotPassword";
 import ResetPassword from "./pages/game/auth/ResetPassword";
 import Join from "./pages/game/Join";
 import Create from "./pages/game/Create";
+import SentEmail from "./pages/game/auth/SentEmail";
+import Reverify from "./pages/game/auth/Reverify";
+import ConfirmEmail from "./pages/game/auth/ConfirmEmail";
 
 const router = createBrowserRouter([
   {
@@ -26,7 +29,24 @@ const router = createBrowserRouter([
         path: "/",
         element: <Poker />,
         children: [
-          { path: "/create", element: <Create />},
+          {
+            path: "/confirm-reset",
+            element: <ConfirmEmail email_type="reset" />,
+          },
+          {
+            path: "/confirm-verify",
+            element: <ConfirmEmail email_type="verify" />,
+          },
+          {
+            path: "/verify-email",
+            element: <SentEmail email_type="verify" />,
+          },
+          {
+            path: "/reset-email",
+            element: <SentEmail email_type="reset" />,
+          },
+          { path: "/reverify", element: <Reverify /> },
+          { path: "/create", element: <Create /> },
           { path: "/join", element: <Join /> },
           { path: "/reset/:resetID", element: <ResetPassword /> },
           { path: "/forgot", element: <ForgotPassword /> },

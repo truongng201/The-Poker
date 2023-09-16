@@ -1,0 +1,16 @@
+.sent-email-content {
+  width: 80%;
+  font-size: 20px;
+  text-align: center;
+}
+
+.resend {
+ color: rgb(18, 24, 38);
+  font-weight: bold;
+  cursor: pointer;
+}
+ .resend:hover {
+  color: rgb(18, 24, 38);
+  font-weight: bold;
+  text-decoration: underline;
+}
