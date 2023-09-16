@@ -1,9 +1,60 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./Signin.css";
-import React from "react";
+import React, { useState } from "react";
 import BackIcon from "../../../assets/icons/back.png";
+import AlertComponent from "../../../components/Alerts";
+import axios from "axios";
+import LoadingComponent from "../../../components/Loading";
 
 export default function Signin() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const EmailValidation = (email) => {
+    const re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  };
+
+  const PasswordValidation = (password) => {
+    const re = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,32}$/;
+    return re.test(password);
+  };
+
+  const signin = (e) => {
+    e.preventDefault();
+    if (!EmailValidation(email)) {
+      setErrorMessage("Invalid email address");
+    } else if (!PasswordValidation(password)) {
+      setErrorMessage(
+        "Password must be 8-32 characters long and contain at least one letter and one number"
+      );
+    } else {
+      setErrorMessage("");
+      setIsLoading(true);
+      axios
+        .post(`${process.env.REACT_APP_SERVER_URL}/auth/signin`, {
+          email: email,
+          password: password,
+        })
+        .then((res) => {
+          localStorage.setItem("access_token", res.data.payload?.access_token);
+          setIsLoading(false);
+          navigate("/");
+        })
+        .catch((err) => {
+          setErrorMessage(err.response?.data?.message);
+          setIsLoading(false);
+        });
+    }
+
+    setTimeout(() => {
+      setErrorMessage("");
+    }, 5000);
+  };
+
   return (
     <div className="Signin">
       <div className="signin-upper-container">
@@ -19,18 +70,27 @@ export default function Signin() {
               type="text"
               className="shared-form-control form-control-signin"
               id="username"
-              placeholder="Email"
+              placeholder="thepoker@gmail.com"
+              onChange={(e) => setEmail(e.target.value)}
             />
             <input
               type="password"
               className="shared-form-control form-control-signin"
               id="password"
               placeholder="Password"
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <div className="signin-button">
-            <span>Sign In</span>
-          </div>
+          <button
+            className="signin-button"
+            onClick={signin}
+            disabled={isLoading}>
+            {isLoading ? (
+              <LoadingComponent size={"sm"} />
+            ) : (
+              <span>Sign In</span>
+            )}
+          </button>
           <div className="signin-group">
             <Link to="/forgot" className="forgot-password">
               Forgot password ?
@@ -70,6 +130,13 @@ export default function Signin() {
           </div>
         </div>
       </div>
+      {errorMessage !== "" && (
+        <AlertComponent
+          message={errorMessage}
+          variant={"danger"}
+          handleClose={() => setErrorMessage("")}
+        />
+      )}
     </div>
   );
 }
