@@ -6,7 +6,7 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import RootLayout from "./components/RootLayout";
 import Monitor from "./pages/Monitor";
 import Poker from "./pages/Poker";
-import Error from "./pages/Error";
+import NotFoundPage from "./pages/NotFoundPage";
 import Signin from "./pages/game/auth/Signin";
 import Signup from "./pages/game/auth/Signup";
 import Home from "./pages/game/Home";
@@ -21,8 +21,8 @@ import ConfirmEmail from "./pages/game/auth/ConfirmEmail";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: window.innerWidth >= 1200 ? <RootLayout /> : <Error />,
-    errorElement: <Error />,
+    element: window.innerWidth >= 1200 ? <RootLayout /> : <NotFoundPage />,
+    errorElement: <NotFoundPage />,
     children: [
       { path: "/monitor", element: <Monitor /> },
       {

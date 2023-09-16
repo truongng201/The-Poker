@@ -53,7 +53,7 @@ jobs:
       - name: Add environment variables
         run: |
           cd client
-          cat ${{ secrets.CLIENT_ENV }} > .env.production
+          echo "${{ secrets.CLIENT_ENV }}" > .env
 
       - name: Build client
         run: |
