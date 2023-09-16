@@ -35,7 +35,10 @@ RUN cp /build/cmd/server . && \
 ENTRYPOINT ["./server"]
 
 # Build a small image
-FROM scratch AS release 
+FROM alpine AS release 
+
+# Install packages
+RUN apk add --no-cache ca-certificates
 
 # Copy binary from build to main folder
 COPY --from=builder /dist/server /
