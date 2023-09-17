@@ -45,7 +45,7 @@ export default function Signin() {
             );
             setTimeout(() => {
               navigate("/reverify");
-            });
+            }, 5000);
           }
           setIsLoading(false);
         });
