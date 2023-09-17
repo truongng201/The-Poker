@@ -22,4 +22,5 @@
   grid-template-columns: 1fr;
   align-content: center;
   place-items: center;
+  padding-top: 30px;
 }

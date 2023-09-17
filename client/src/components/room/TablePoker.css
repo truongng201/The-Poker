@@ -140,7 +140,7 @@
 .TablePoker .bank-up > .bank-value {
   position: absolute;
   font-family: "Houschka Rounded";
-  right: -50px;
+  left: 35px;
   font-weight: bold;
   font-size: 12px;
   color: #96e296;
@@ -198,4 +198,77 @@
   top: 10px;
   right: 0px;
   background-color: #444;
+}
+
+.TablePoker .player-group-cards {
+  position: absolute;
+  width: 70px;
+  height: 40px;
+  z-index: 20;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.TablePoker .player-group-cards-down {
+  bottom: -50px;
+  right: 10px;
+}
+
+.TablePoker .player-group-cards-up {
+  top: -55px;
+  right: 10px;
+}
+
+.TablePoker .player-group-cards-left {
+  top: -20px;
+  left: -60px;
+}
+
+.TablePoker .player-group-cards-right {
+  bottom: -10px;
+  left: 80px;
+}
+
+.TablePoker .player-card {
+  width: 30px;
+  height: 40px;
+  background-color: white;
+  z-index: 20;
+  border-radius: 5px;
+  font-family: "Houschka Rounded";
+}
+
+.TablePoker .player-name {
+  font-family: "Houschka Rounded";
+  text-align: center;
+  width: 90px;
+  color: rgb(18, 24, 38);
+  padding: 2px;
+  box-sizing: border-box;
+  border-radius: 5px;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  overflow: hidden;
+  position: absolute;
+  z-index: 20;
+}
+
+.TablePoker .player-name-down {
+  top: -20px;
+  left: 0px;
+}
+
+.TablePoker .player-name-up {
+  bottom: -10px;
+}
+
+.TablePoker .player-name-right {
+  top: 40px;
+  left: 60px;
+}
+
+.TablePoker .player-name-left {
+  top: 20px;
+  right: 65px;
 }
