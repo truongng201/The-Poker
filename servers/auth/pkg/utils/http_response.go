@@ -16,7 +16,7 @@ const (
 	ErrBadRequest         = "Bad request"
 	ErrEmailAlreadyExists = "User with given email already exists"
 	ErrNoSuchUser         = "User not found"
-	ErrWrongCredentials   = "Wrong Credentials"
+	ErrInvalidPassword    = "Invalid password"
 	ErrNotFound           = "Not Found"
 	ErrUnauthorized       = "Unauthorized"
 	ErrForbidden          = "Forbidden"
@@ -58,10 +58,10 @@ func ErrNoSuchUserResponse() error {
 	})
 }
 
-func ErrWrongCredentialsResponse() error {
+func ErrInvalidPasswordResponse() error {
 	return echo.NewHTTPError(http.StatusUnauthorized, Response{
 		Success: false,
-		Message: ErrWrongCredentials,
+		Message: ErrInvalidPassword,
 		Payload: "",
 	})
 }

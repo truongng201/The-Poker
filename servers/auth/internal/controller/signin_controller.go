@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"fmt"
 	"time"
 
 	config "auth-service/config"
@@ -43,7 +42,7 @@ func (controller *SigninController) checkEmailExists(
 	}
 
 	if !res.IsVerified {
-		return res, false, c.Redirect(302, fmt.Sprintf("%s/reverify", config.Con.Domains.Client))
+		return res, false, utils.ErrUnverifiedEmailResponse()
 	}
 
 	return res, true, nil
@@ -55,7 +54,7 @@ func (controller *SigninController) checkPassword(
 	res sqlc.GetUserByEmailRow,
 ) (bool, error) {
 	if !utils.CheckPassword(req.Password, res.HashedPassword) {
-		return false, utils.ErrWrongCredentialsResponse()
+		return false, utils.ErrInvalidPasswordResponse()
 	}
 
 	return true, nil

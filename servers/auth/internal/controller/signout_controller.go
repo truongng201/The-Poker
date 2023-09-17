@@ -42,7 +42,7 @@ func (controller *SignoutController) revokeRefreshToken(
 	}
 
 	if email != accessTokenEmail {
-		return false, utils.ErrWrongCredentialsResponse()
+		return false, utils.ErrBadRequestResponse()
 	}
 
 	err = utils.RedisClient.Del(c.Request().Context(), req.RefreshToken).Err()
