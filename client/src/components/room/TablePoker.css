@@ -4,6 +4,9 @@
   background-color: #4aad4a;
   position: relative;
   border-radius: 150px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: 15px solid #a95555;
 }
 
@@ -29,4 +32,170 @@
   position: absolute;
   top: 0;
   left: 0;
+}
+
+.TablePoker > .card-place {
+  border: 5px solid #63c763;
+  height: 25%;
+  width: 340px;
+  border-radius: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+  position: absolute;
+}
+
+.TablePoker > .card-place > .card {
+  width: 50px;
+  border-radius: 5px;
+  background-color: white;
+  font-family: "Houschka Rounded";
+}
+
+.TablePoker > .players {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 100;
+}
+
+.TablePoker > .players > .player {
+  position: absolute;
+}
+
+.TablePoker > .players > .player-1 {
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 0px;
+}
+
+.TablePoker > .players > .player-2 {
+  transform: translate(-50%, -50%);
+  top: 0px;
+  left: 25%;
+}
+
+.TablePoker > .players > .player-3 {
+  transform: translate(-50%, -50%);
+  top: 0px;
+  left: 50%;
+}
+
+.TablePoker > .players > .player-4 {
+  transform: translate(-50%, -50%);
+  top: 0px;
+  left: 75%;
+}
+
+.TablePoker > .players > .player-5 {
+  transform: translate(50%, -50%);
+  right: 0px;
+  top: 50%;
+}
+
+.TablePoker > .players > .player-6 {
+  transform: translate(-50%, 50%);
+  bottom: 0px;
+  left: 75%;
+}
+
+.TablePoker > .players > .player-7 {
+  transform: translate(-50%, 50%);
+  bottom: 0px;
+  left: 50%;
+}
+
+.TablePoker > .players > .player-8 {
+  transform: translate(-50%, 50%);
+  bottom: 0px;
+  left: 25%;
+}
+
+.TablePoker .avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 100%;
+  z-index: 20;
+}
+
+.TablePoker .bank {
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  z-index: 10;
+}
+
+.TablePoker .bank-up {
+  right: 0;
+  top: 10%;
+}
+
+.TablePoker .bank-down {
+  left: 0;
+  bottom: 0%;
+}
+
+.TablePoker .bank-up > .bank-value {
+  position: absolute;
+  font-family: "Houschka Rounded";
+  right: -50px;
+  font-weight: bold;
+  font-size: 12px;
+  color: #96e296;
+}
+
+.TablePoker .bank-down > .bank-value {
+  position: absolute;
+  font-family: "Houschka Rounded";
+  right: 30px;
+  font-weight: bold;
+  font-size: 12px;
+  color: #96e296;
+}
+
+.TablePoker .bank > .jetons {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border-radius: 100%;
+  border: 2px white dotted;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.TablePoker .bank-up > .v-10 {
+  top: -10px;
+  left: 0px;
+  background-color: crimson;
+}
+
+.TablePoker .bank-up > .v-5 {
+  top: 0px;
+  right: 5px;
+  background-color: goldenrod;
+}
+
+.TablePoker .bank-up > .v-1 {
+  top: 15px;
+  right: -5px;
+  background-color: #444;
+}
+
+.TablePoker .bank-down > .v-10 {
+  top: -15px;
+  left: -5px;
+  background-color: crimson;
+}
+
+.TablePoker .bank-down > .v-5 {
+  top: 0px;
+  left: 5px;
+  background-color: goldenrod;
+}
+
+.TablePoker .bank-down > .v-1 {
+  top: 10px;
+  right: 0px;
+  background-color: #444;
 }
