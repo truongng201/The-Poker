@@ -1,9 +1,8 @@
 import "./Home.css";
-import React from "react";
 import { Link } from "react-router-dom";
 import DoorIcon from "../../assets/icons/door.png";
 import GameControllerIcon from "../../assets/icons/game-controller.png";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function Home() {
   const [username, setUsername] = useState("");

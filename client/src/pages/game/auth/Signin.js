@@ -39,6 +39,14 @@ export default function Signin() {
         })
         .catch((err) => {
           setErrorMessage(err.response?.data?.message);
+          if (err.response?.data?.message === "Email not verified") {
+            setErrorMessage(
+              "Email not verified yet. We will redirect you to the verification page"
+            );
+            setTimeout(() => {
+              navigate("/reverify");
+            });
+          }
           setIsLoading(false);
         });
     }
