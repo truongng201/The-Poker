@@ -1,0 +1,36 @@
+Environment: development
+AllowedOrigins: ["*"]
+JWT:
+  Secretkey: "secret"
+  RefreshTokenExpirationTime: 43200 # in minutes (30 days)
+  AccessTokenExpirationTime: 60 # in minutes
+Redis:
+  Address: "cache:6379"
+  Password: "admin"
+  DB: 0
+  PoolSize: 10
+  MinIdleConns: 10
+  IdleTimeout: 300
+  MaxConnAge: 600
+  ReadTimeout: 300
+  WriteTimeout: 300
+Email:
+  Username: "The Poker"
+  Password: "xvwapojesnlfzpog"
+  From: "truongng201@gmail.com"
+  FromName: "The Poker"
+Timeout:
+  ResetPasswordToken: 15 # in minutes
+  VerifyEmailToken: 15 # in minutes
+Domains:
+  Client: http://localhost:3000
+  Server: http://localhost:8080
+Database:
+  DatabaseType: postgres
+  Host: database
+  Port: 5432
+  Username: admin
+  Password: admin
+  DatabaseName: beta-db
+  SSLMode: disable
+  DatabaseURI: postgres://admin:admin@database:5432/beta-db?sslmode=disable
