@@ -176,7 +176,7 @@ func (client *Client) handleDrawingAction(message Message, room *Room) {
 		},
 		Sender: MessageClient{
 			ClientName: client.ClientName,
-			ClientID:  client.ClientID,
+			ClientID:   client.ClientID,
 		},
 		Payload: MessageDrawingPayload{
 			OffsetX: message.Payload.(map[string]interface{})["offset_x"].(float64),

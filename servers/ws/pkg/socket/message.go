@@ -41,13 +41,13 @@ type MessageLeaveRoomPayload struct {
 }
 
 type MessageChatPayload struct {
-	Message string          `json:"message"`
+	Message string `json:"message"`
 }
 
 type MessageDrawingPayload struct {
-	OffsetX float64         `json:"offset_x"`
-	OffsetY float64         `json:"offset_y"`
-	State   string          `json:"state"`
+	OffsetX float64 `json:"offset_x"`
+	OffsetY float64 `json:"offset_y"`
+	State   string  `json:"state"`
 }
 
 func (message *Message) encode() []byte {

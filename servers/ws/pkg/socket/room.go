@@ -99,7 +99,7 @@ func (room *Room) broadcastMessage(message []byte) {
 	log.Info("Broadcasting message to all clients in room")
 	log.Info(fmt.Sprintf("Number of clients in room %s: %d", room.RoomID, len(room.Clients)))
 	var msg Message
-	if err :=json.Unmarshal(message, &msg); err != nil {
+	if err := json.Unmarshal(message, &msg); err != nil {
 		log.Error(err)
 		return
 	}
@@ -109,7 +109,7 @@ func (room *Room) broadcastMessage(message []byte) {
 			if client.ClientID != msg.Sender.ClientID {
 				client.send <- message
 			}
-		}else{
+		} else {
 			client.send <- message
 		}
 	}

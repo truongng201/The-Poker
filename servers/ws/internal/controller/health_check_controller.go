@@ -24,14 +24,12 @@ var module_name = func() string {
 	return ""
 }
 
-
 func (controller *HealthCheckController) Execute(c echo.Context) error {
 	if Version == "" {
 		Version = "development"
 	} else {
 		Version = Version[:7]
 	}
-
 
 	return c.JSON(200, &HealthCheck{
 		Success: true,
