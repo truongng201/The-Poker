@@ -2,6 +2,7 @@ import React from "react";
 import "./Room.css";
 import TablePoker from "../../components/room/TablePoker";
 import Chatbox from "../../components/room/Chatbox";
+import PokerTool from "../../components/room/PokerTool";
 
 export default function Room() {
   return (
@@ -9,6 +10,7 @@ export default function Room() {
       <div className="Room">
         <div className="left-room-container">
           <TablePoker />
+          <PokerTool />
         </div>
         <Chatbox />
       </div>

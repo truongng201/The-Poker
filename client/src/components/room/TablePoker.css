@@ -47,13 +47,6 @@
   position: absolute;
 }
 
-.TablePoker > .card-place > .card {
-  width: 50px;
-  border-radius: 5px;
-  background-color: white;
-  font-family: "Houschka Rounded";
-}
-
 .TablePoker > .players {
   position: relative;
   width: 100%;
@@ -202,8 +195,8 @@
 
 .TablePoker .player-group-cards {
   position: absolute;
-  width: 70px;
-  height: 40px;
+  width: 110px;
+  height: 60px;
   z-index: 20;
   display: flex;
   flex-direction: row;
@@ -228,15 +221,6 @@
 .TablePoker .player-group-cards-right {
   bottom: -10px;
   left: 80px;
-}
-
-.TablePoker .player-card {
-  width: 30px;
-  height: 40px;
-  background-color: white;
-  z-index: 20;
-  border-radius: 5px;
-  font-family: "Houschka Rounded";
 }
 
 .TablePoker .player-name {
