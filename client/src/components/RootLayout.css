@@ -18,6 +18,7 @@
   color: white;
   height: 100%; /* Set the height of the container to 100% of the viewport height */
   overflow: hidden; /* Add scrolling if content overflows */
+  border-radius: 0px 10px 10px 0px;
 }
 
 .right-container {

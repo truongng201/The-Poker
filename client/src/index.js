@@ -7,16 +7,17 @@ import RootLayout from "./components/RootLayout";
 import Monitor from "./pages/Monitor";
 import Poker from "./pages/Poker";
 import NotFoundPage from "./pages/NotFoundPage";
-import Signin from "./pages/game/auth/Signin";
-import Signup from "./pages/game/auth/Signup";
-import Home from "./pages/game/Home";
-import ForgotPassword from "./pages/game/auth/ForgotPassword";
-import ResetPassword from "./pages/game/auth/ResetPassword";
-import Join from "./pages/game/Join";
-import Create from "./pages/game/Create";
-import SentEmail from "./pages/game/auth/SentEmail";
-import Reverify from "./pages/game/auth/Reverify";
-import ConfirmEmail from "./pages/game/auth/ConfirmEmail";
+import Signin from "./pages/home/auth/Signin";
+import Signup from "./pages/home/auth/Signup";
+import Home from "./pages/home/Home";
+import ForgotPassword from "./pages/home/auth/ForgotPassword";
+import ResetPassword from "./pages/home/auth/ResetPassword";
+import Join from "./pages/home/Join";
+import Create from "./pages/home/Create";
+import SentEmail from "./pages/home/auth/SentEmail";
+import Reverify from "./pages/home/auth/Reverify";
+import ConfirmEmail from "./pages/home/auth/ConfirmEmail";
+import Room from "./pages/room/Room";
 
 const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ const router = createBrowserRouter([
     errorElement: <NotFoundPage />,
     children: [
       { path: "/monitor", element: <Monitor /> },
+      {
+        path: "/room/:roomID",
+        element: <Room />,
+      },
       {
         path: "/",
         element: <Poker />,
