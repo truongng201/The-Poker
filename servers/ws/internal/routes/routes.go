@@ -18,11 +18,11 @@ func Routes(e *echo.Echo, controller *controller.AppController) *echo.Echo {
 	go wsServer.Start()
 
 	api.POST("/create-room", func(c echo.Context) error {
-		return controller.CreateRoomController.Execute(c)
+		return controller.CreateRoomController.Execute(c, wsServer)
 	})
 
 	api.POST("/join-room", func(c echo.Context) error {
-		return controller.JoinRoomController.Execute(c)
+		return controller.JoinRoomController.Execute(c, wsServer)
 	})
 
 	api.POST("/room", func(c echo.Context) error {
